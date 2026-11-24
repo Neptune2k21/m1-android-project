@@ -1,0 +1,115 @@
+\documentclass[a4paper,10pt]{report}
+
+% \def\theme{nuit}
+
+\input{metadonnees}
+\input{preambule}
+
+\begin{document}
+
+\pageDeGarde
+\tableofcontents
+
+\chapter{Spécimen du style}
+
+\section{Typographie}
+
+Texte courant en Onest : l'application propose chaque jour une carte
+composée d'un plat, d'un verre et d'un dessert, en tenant compte de la
+météo, du régime et du matériel de l'utilisateur. Chiffres :
+350~g · 25~min · 4~pers. · 12,5~\%~vol. \textbf{Gras}, \emph{emphase},
+\textmoyen{Onest Medium}, \textsecondaire{texte secondaire},
+\texttt{MealRepository.kt}, \enquote{citation} et un
+\href{https://www.themealdb.com}{lien}.
+
+\subsection{Sous-section}
+
+\subsubsection{Sous-sous-section}
+
+\paragraph{Paragraphe} Texte qui suit directement le titre de paragraphe.
+
+\section{Signatures}
+
+\bandeau{Carte du jeudi 5 novembre}{13° éclaircies}
+
+\medskip
+\etiquette[1]{Le plat}\quad
+\badge{25 min · sans four}\quad
+\badge[herbe]{Adapté · sans gluten}\quad
+\badge[sauge]{Sans alcool}\quad
+\badge[contour]{Plaques}\quad
+\badge[encre]{Japon}
+
+\begin{lignes}
+  \ligne[2]{Le verre}{Vermentino}
+  \ligne[3]{Le dessert}{Affogato}
+  \ligne{Farfalle}{350 g}
+\end{lignes}
+
+\begin{carte}[Le bandeau daté]
+  En-tête de carte : la date et la météo cadrent la suggestion du jour.
+  Filet épais dessus, filet fin dessous.
+\end{carte}
+
+\begin{note}
+  Les données proviennent de TheMealDB et TheCocktailDB.
+\end{note}
+
+\begin{attention}[Allergènes]
+  Indicatif : vérifiez toujours les étiquettes.
+\end{attention}
+
+\section{Exigences}
+
+\begin{exigence}[priorite=haute]{Afficher la carte du jour}
+  \label{ex:carte}
+  L'écran d'accueil présente un plat, un verre et un dessert, accompagnés
+  du bandeau daté (date et météo locale).
+\end{exigence}
+
+\begin{exigence}[type=ENF, priorite=moyenne]{Mode sombre}
+  L'application suit le thème du système (palettes Blanc / Nuit).
+\end{exigence}
+
+\begin{exigence}[priorite=basse]{Carte du monde}
+  Parcourir les recettes par pays d'origine.
+\end{exigence}
+
+Renvoi vers l'exigence~\ref{ex:carte}.
+
+\section{Listes et tableaux}
+
+\begin{itemize}
+  \item Carte du jour
+  \item Explorer : plats, cocktails, vins
+  \begin{itemize}
+    \item filtres par pays
+  \end{itemize}
+\end{itemize}
+
+\begin{enumerate}
+  \item Vérification d'âge
+  \item Onboarding : régime, matériel, boissons
+  \item Accueil
+\end{enumerate}
+
+\begin{description}
+  \item[Accord] association d'un plat et d'une boisson.
+\end{description}
+
+\begin{table}[htbp]
+  \caption{Écrans principaux}
+  \begin{tableau}{L{3.2cm} Y R{2cm}}
+    \entete{Écran} & \entete{Rôle} & \entete{Priorité} \\
+    \midrule
+    Carte & Suggestion du jour & \badge[herbe]{Haute} \\
+    \midrule
+    Explorer & Catalogue plats, cocktails, vins & \badge[agrume]{Moyenne} \\
+    \midrule
+    Courses & Liste générée depuis les recettes & \badge[herbe]{Haute} \\
+  \end{tableau}
+\end{table}
+
+\ecran{1 · Accueil, la carte du jour.png}{Accueil — la carte du jour (Direction A, à remplacer par la C).}
+
+\end{document}

@@ -1,0 +1,61 @@
+\chapter{Présentation du projet}
+
+\section{Contexte}
+
+Table complète est une application Android développée en Kotlin et Jetpack
+Compose dans le cadre du M1 à l'ESGI.
+
+L'idée de départ vient de Theo : une application autour des cocktails,
+construite sur l'API publique TheCocktailDB. En cherchant des sources de
+données, nous avons trouvé TheMealDB, son équivalent pour la cuisine. Les deux
+bases se complètent naturellement, l'une donne le plat, l'autre le verre :
+nous avons donc décidé de les réunir.
+
+Le sujet exclut tout backend. Les données viennent d'API publiques et de
+fichiers embarqués dans l'application, et toute la logique (filtres, accords,
+menus, liste de courses) s'exécute sur le téléphone. Ce cadre nous a orientés
+vers un projet où l'intérêt tient surtout à l'interface et à la manière de
+manipuler ces données.
+
+\section{Objectifs}
+
+Nous voulons une application ludique et interactive, qui donne envie de
+cuisiner plutôt qu'un simple moteur de recherche de recettes. Elle doit :
+
+\begin{itemize}
+  \item proposer chaque jour un repas complet : un plat, un verre et un dessert ;
+  \item adapter les suggestions au régime, au matériel et aux boissons de
+        l'utilisateur ;
+  \item accompagner la préparation étape par étape, jusqu'à la liste de courses ;
+  \item présenter les recettes comme une carte de restaurant, avec des
+        animations et des retours haptiques soignés.
+\end{itemize}
+
+Côté projet, l'objectif est une base de code propre, testée et construite à
+deux sur Git.
+
+\section{Public cible}
+
+L'application s'adresse à toute personne qui cuisine chez elle et cherche une
+idée de repas. Aucun niveau n'est requis : chaque recette se suit pas à pas.
+
+Les accords avec du vin ou des cocktails alcoolisés sont réservés aux
+personnes majeures. Les autres utilisateurs ont accès à toute l'application,
+avec uniquement des boissons sans alcool.
+
+\section{Équipe}
+
+Le projet est réalisé par deux étudiants et encadré par M. Ramzy Kermad.
+Sans backend, tout le travail porte sur l'application. Nous répartissons donc
+la charge par fonctionnalité, de l'écran jusqu'aux données et aux tests, pour
+que chacun intervienne sur toutes les couches.
+
+\begin{tableau}{L{3.4cm} Y}
+  \entete{Membre} & \entete{Périmètre principal} \\
+  \midrule
+  Mamadou Cisse & Plats : exploration, fiche recette, mode cuisine, liste de courses \\
+  \midrule
+  Theo Robert & Boissons : cocktails, vins, accords, composition de menus \\
+  \midrule
+  En commun & Architecture, design system, premier lancement, favoris, hors ligne, relecture des PR \\
+\end{tableau}

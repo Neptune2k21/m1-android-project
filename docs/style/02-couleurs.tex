@@ -1,0 +1,61 @@
+% ---------------------------------------------------------------------
+%  02 · Couleurs — Direction C « Marché »
+%  Les teintes brutes ne s'utilisent pas directement dans le document :
+%  passer par les jetons sémantiques (fond, texte, action, …) pour que
+%  le thème nuit fonctionne partout.
+% ---------------------------------------------------------------------
+
+% Teintes brutes · clair
+\definecolor{blanc}       {HTML}{FFFFFF}
+\definecolor{brume}       {HTML}{F2F5F1}
+\definecolor{encre}       {HTML}{0F1F17}
+\definecolor{herbe}       {HTML}{16764A}
+\definecolor{agrume}      {HTML}{FFB020}
+\definecolor{sauge}       {HTML}{55635B}
+
+% Teintes brutes · nuit
+\definecolor{nuit}        {HTML}{0A1410}
+\definecolor{surfaceNuit} {HTML}{12201A}
+\definecolor{encreNuit}   {HTML}{EAF2EC}
+\definecolor{herbeNuit}   {HTML}{4FBF84}
+\definecolor{agrumeNuit}  {HTML}{FFC247}
+\definecolor{saugeNuit}   {HTML}{9DB1A5}
+
+% Jetons sémantiques
+%   fond / surface      papier de la page / cartes et pastilles neutres
+%   texte / texte2      encre principale / encre secondaire (sauge)
+%   action / surAction  herbe : numéros, liens, priorité haute / texte posé dessus
+%   accent / surAccent  agrume : badges d'info (durée, version) / texte posé dessus
+%   filet / filetFort   filets fins / filets épais (bandeau, titres)
+\providecommand\theme{clair}
+
+\ifdefstring{\theme}{nuit}{%
+  \colorlet{fond}      {nuit}%
+  \colorlet{surface}   {surfaceNuit}%
+  \colorlet{texte}     {encreNuit}%
+  \colorlet{texte2}    {saugeNuit}%
+  \colorlet{action}    {herbeNuit}%
+  \colorlet{surAction} {nuit}%
+  \colorlet{accent}    {agrumeNuit}%
+  \colorlet{surAccent} {encre}%
+  \colorlet{filet}     {encreNuit!16!nuit}%
+  \colorlet{filetFort} {encreNuit}%
+  \colorlet{teinteAction}{herbeNuit!18!nuit}%
+  \colorlet{teinteAccent}{agrumeNuit!16!nuit}%
+}{%
+  \colorlet{fond}      {blanc}%
+  \colorlet{surface}   {brume}%
+  \colorlet{texte}     {encre}%
+  \colorlet{texte2}    {sauge}%
+  \colorlet{action}    {herbe}%
+  \colorlet{surAction} {blanc}%
+  \colorlet{accent}    {agrume}%
+  \colorlet{surAccent} {encre}%
+  \colorlet{filet}     {encre!14!blanc}%
+  \colorlet{filetFort} {encre}%
+  \colorlet{teinteAction}{herbe!10!blanc}%
+  \colorlet{teinteAccent}{agrume!18!blanc}%
+}
+
+\ifdefstring{\theme}{nuit}{\pagecolor{fond}}{}
+\AtBeginDocument{\color{texte}}

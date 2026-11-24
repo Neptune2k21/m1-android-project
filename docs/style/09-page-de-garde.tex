@@ -1,0 +1,43 @@
+% ---------------------------------------------------------------------
+%  09 · Page de garde — reprend l'en-tête du design system :
+%  bandeau à trois colonnes, nom de l'app en affiche, fiche à pointillés.
+%  Données : metadonnees.tex
+% ---------------------------------------------------------------------
+
+\newcommand\pageDeGarde{%
+  \begin{titlepage}
+    \color{texte}%
+    \setlength\parskip{0pt}%
+    \bandeau[\Plateforme]{\TypeDocument\ · v\VersionDoc}{Données \SourcesDonnees}
+
+    \vspace*{30mm}
+    \textlabel[texte2]{\TypeDocument}
+
+    \vspace{6mm}
+    {\policeAffiche\fontsize{76}{70}\selectfont
+      \NomAppli\\[2pt]
+      \textcolor{action}{\NomAppliAccent}\par}
+
+    \vspace{10mm}
+    {\color{filetFort}\rule{\linewidth}{1.1pt}}
+
+    \vspace{8mm}
+    \begin{minipage}[t]{0.72\linewidth}
+      \raggedright
+      {\Large\color{texte2}\SousTitre\par}
+    \end{minipage}
+
+    \vspace{8mm}
+    \badge[agrume]{Version \VersionDoc}\hspace{0.4em}%
+    \badge[herbe]{\Plateforme}\hspace{0.4em}%
+    \badge[contour]{\Etablissement}
+
+    \vfill
+    \begin{lignes}
+      \ligne[1]{Projet}{\NomAppli\ \NomAppliAccent}
+      \ligne[2]{Équipe}{\Auteurs}
+      \ligne[3]{Encadrement}{\Encadrant}
+      \ligne[4]{Date}{\DateDoc}
+    \end{lignes}
+  \end{titlepage}%
+}

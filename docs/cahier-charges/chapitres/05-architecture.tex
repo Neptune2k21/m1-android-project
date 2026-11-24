@@ -1,0 +1,179 @@
+\chapter{Architecture technique}
+
+\section{Langage et interface}
+
+L'application est écrite exclusivement en Kotlin, avec une interface
+entièrement en Jetpack Compose : aucun layout XML. Elle repose sur une seule
+activité et Navigation Compose. Le thème Material~3 sert de base, avec les
+couleurs et les polices de la direction C.
+
+\begin{tableau}{L{4cm} Y}
+  \entete{Paramètre} & \entete{Valeur} \\
+  \midrule
+  Version minimale & Android 8.0 (API 26) \\
+  \midrule
+  Version cible & Dernière API stable au moment du rendu \\
+  \midrule
+  Orientation & Portrait ; paysage pour le mode cuisine \\
+\end{tableau}
+
+\section{Architecture MVVM}
+
+Chaque écran suit le même schéma. Le composable affiche un état et remonte
+les actions de l'utilisateur. Le ViewModel transforme ces actions en appels
+au repository et expose un \texttt{StateFlow} d'état d'écran. Le
+repository est la seule porte d'accès aux données : il lit la base locale et
+la rafraîchit depuis le réseau.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      couche/.style = {rounded corners=3mm, fill=surface, text=texte,
+                       minimum width=3.6cm, minimum height=1.2cm,
+                       align=center, font=\small\policeMoyenne},
+      source/.style = {rounded corners=3mm, draw=filet, line width=0.6pt,
+                       text=texte, minimum width=3.3cm, minimum height=1cm,
+                       align=center, font=\small},
+      fleche/.style = {-{Latex[length=2mm]}, draw=texte2, line width=0.6pt},
+      note/.style   = {font=\scriptsize, text=texte2},
+    ]
+    \node[couche] (ui) {Écran\\{\footnotesize Composable}};
+    \node[couche, right=1.6cm of ui] (vm) {ViewModel};
+    \node[couche, right=1.6cm of vm, fill=teinteAction] (repo) {Repository};
+
+    \draw[fleche] ([yshift=3mm]ui.east) -- node[note, above]{actions} ([yshift=3mm]vm.west);
+    \draw[fleche] ([yshift=-3mm]vm.west) -- node[note, below]{état} ([yshift=-3mm]ui.east);
+    \draw[fleche] ([yshift=3mm]vm.east) -- node[note, above]{appels} ([yshift=3mm]repo.west);
+    \draw[fleche] ([yshift=-3mm]repo.west) -- node[note, below]{Flow} ([yshift=-3mm]vm.east);
+
+    \node[source, below=1.6cm of ui]   (api)   {API REST\\{\footnotesize Retrofit}};
+    \node[source, right=0.55cm of api] (room)  {Room\\{\footnotesize cache, favoris}};
+    \node[source, right=0.55cm of room](store) {DataStore\\{\footnotesize préférences}};
+    \node[source, right=0.55cm of store](json) {Assets JSON\\{\footnotesize vins, règles}};
+
+    \foreach \s in {api, room, store, json}
+      \draw[fleche] (repo.south) -- (\s.north);
+  \end{tikzpicture}
+  \caption{Flux de données entre les couches}
+  \label{fig:mvvm}
+\end{figure}
+
+\begin{tableau}{L{4cm} Y}
+  \entete{Besoin} & \entete{Bibliothèque} \\
+  \midrule
+  Injection de dépendances & Hilt \\
+  \midrule
+  Réseau & Retrofit, OkHttp, kotlinx.serialization \\
+  \midrule
+  Images & Coil, avec cache disque \\
+  \midrule
+  Navigation & Navigation Compose \\
+  \midrule
+  Base locale & Room \\
+  \midrule
+  Préférences & DataStore \\
+  \midrule
+  Asynchronisme & Coroutines et Flow \\
+\end{tableau}
+
+Le code tient dans un seul module Gradle, découpé en paquets par
+fonctionnalité (\texttt{onboarding}, \texttt{carte}, \texttt{explorer},
+\texttt{recette}, \texttt{accords}, \texttt{courses}, \texttt{favoris},
+\texttt{reglages}) et en paquets communs (\texttt{designsystem},
+\texttt{data}). À deux, plusieurs modules apporteraient plus de
+configuration que de bénéfices.
+
+\section{Sources de données}
+
+\subsection{API}
+
+Les deux API sont publiques et gratuites. La clé de test « 1 » suffit pour un
+projet pédagogique.
+
+\begin{tableau}{L{2.6cm} Y}
+  \entete{API} & \entete{Points d'accès utilisés} \\
+  \midrule
+  TheMealDB &
+    \texttt{\small search.php?s=} (nom),
+    \texttt{\small filter.php?c= / a= / i=} (catégorie, pays, ingrédient),
+    \texttt{\small lookup.php?i=} (fiche),
+    \texttt{\small random.php},
+    \texttt{\small categories.php},
+    \texttt{\small list.php?a=list} (pays) \\
+  \midrule
+  TheCocktailDB &
+    \texttt{\small search.php?s=},
+    \texttt{\small filter.php?a=} (avec ou sans alcool),
+    \texttt{\small filter.php?g=} (verre),
+    \texttt{\small lookup.php?i=},
+    \texttt{\small random.php} \\
+\end{tableau}
+
+\subsection{Données ajoutées par l'équipe}
+
+Une partie de ce qu'affichent les maquettes n'existe dans aucune des deux
+API. Ces données sont soit rédigées par l'équipe et embarquées en JSON dans
+l'application, soit déduites du contenu des recettes.
+
+\begin{tableau}{L{3.6cm} Y}
+  \entete{Donnée} & \entete{Origine} \\
+  \midrule
+  Vins et cépages & Catalogue JSON rédigé par l'équipe \\
+  \midrule
+  Règles d'accord & Table JSON : catégorie et pays du plat vers styles de vin et de cocktail \\
+  \midrule
+  Allergènes et substitutions & Table JSON des ingrédients courants (gluten, lactose, produits animaux) \\
+  \midrule
+  Rayons de la liste & Table JSON ingrédient vers rayon \\
+  \midrule
+  Régions et plat emblématique & Table JSON pour la carte du monde \\
+  \midrule
+  Matériel et durées & Mots-clés repérés dans les instructions (four, minutes…) \\
+  \midrule
+  Portions & Quatre personnes par défaut, quantités numériques extraites des mesures \\
+\end{tableau}
+
+\section{Stockage local et cache}
+
+Room est la source de vérité : les écrans observent la base et le réseau ne
+fait que la mettre à jour.
+
+\begin{tableau}{L{3.6cm} Y}
+  \entete{Table} & \entete{Contenu} \\
+  \midrule
+  \texttt{recette}, \texttt{boisson} & Fiches consultées, avec date de mise en cache \\
+  \midrule
+  \texttt{carte\_du\_jour} & Date, plat, verre et dessert tirés \\
+  \midrule
+  \texttt{favori} & Type (plat, boisson, menu), identifiant, date \\
+  \midrule
+  \texttt{menu}, \texttt{menu\_element} & Menus composés et leurs éléments \\
+  \midrule
+  \texttt{article\_courses} & Nom, quantité, unité, rayon, état coché \\
+\end{tableau}
+
+Les préférences (âge confirmé, régime, matériel, boissons, thème, retour
+haptique, profil) sont stockées dans DataStore.
+
+Les fiches ouvertes sont conservées 30 jours, et sans limite tant qu'elles
+figurent dans un favori, un menu ou la carte du jour. Les résultats de
+recherche ne sont pas mis en cache. Les photos passent par le cache disque
+de Coil.
+
+\section{Asynchronisme et erreurs réseau}
+
+Les appels réseau et les accès à la base s'exécutent dans des coroutines,
+hors du thread principal. Chaque écran expose trois états : chargement,
+contenu, erreur. Les erreurs sont traduites en messages compréhensibles :
+
+\begin{tableau}{L{4cm} Y}
+  \entete{Situation} & \entete{Comportement} \\
+  \midrule
+  Pas de réseau & Bandeau « hors ligne », affichage des données en cache \\
+  \midrule
+  Délai dépassé (15 s) & Message et bouton Réessayer \\
+  \midrule
+  Erreur du serveur & Message et bouton Réessayer, données en cache conservées \\
+  \midrule
+  Réponse vide & État vide avec une suggestion (élargir les filtres) \\
+\end{tableau}

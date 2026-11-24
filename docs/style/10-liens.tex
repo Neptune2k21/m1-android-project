@@ -1,0 +1,24 @@
+% ---------------------------------------------------------------------
+%  10 · Liens & métadonnées PDF (hyperref en dernier)
+% ---------------------------------------------------------------------
+
+\usepackage[hyphens]{xurl}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = action,
+  urlcolor   = action,
+  citecolor  = action,
+  filecolor  = action,
+  pdftitle   = {\NomAppli\ \NomAppliAccent\ — \TypeDocument},
+  pdfsubject = {\SousTitre},
+  pdfauthor  = {\Auteurs},
+  pdflang    = {fr-FR},
+  bookmarksnumbered = true,
+}
+
+% Le sommaire et le bandeau gardent la couleur du texte
+\AtBeginDocument{\hypersetup{linktoc=all}}
+\pretocmd{\tableofcontents}{\begingroup\hypersetup{linkcolor=texte}}{}{}
+\apptocmd{\tableofcontents}{\endgroup}{}{}

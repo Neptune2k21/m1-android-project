@@ -1,0 +1,213 @@
+\chapter{Fonctionnalités principales}
+
+Ce chapitre fixe le périmètre de la version rendue en fin de trimestre. Chaque
+exigence porte un identifiant et une priorité :
+
+\begin{description}
+  \item[Haute] indispensable à la démonstration ;
+  \item[Moyenne] prévue, mais peut être simplifiée si le temps manque ;
+  \item[Basse] finition, traitée en dernier.
+\end{description}
+
+Les numéros d'écran renvoient aux maquettes du chapitre~\ref{ch:interface}.
+
+\section{Premier lancement et préférences}
+
+Au premier lancement, quatre écrans courts recueillent ce qui sert ensuite à
+personnaliser l'application (écrans 6 à 10, figure~\ref{fig:lancement}).
+Les choix restent modifiables dans les réglages.
+
+\begin{exigence}[priorite=haute]{Vérification d'âge}
+  L'utilisateur déclare s'il a 18 ans ou plus. S'il répond non, ou s'il choisit
+  de continuer sans alcool, les vins et cocktails alcoolisés sont masqués dans
+  toute l'application. La déclaration suffit, aucun justificatif n'est demandé.
+  Chaque écran qui affiche de l'alcool porte la mention sanitaire légale.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Régime alimentaire}
+  Choix multiple parmi : de tout, végétarien, végétalien, pescétarien, sans
+  gluten, sans lactose. L'étape peut être passée.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Matériel de cuisine}
+  L'utilisateur coche ses appareils : plaques, four, micro-ondes, air fryer,
+  mixeur, grill. Les recettes qui en demandent d'autres sont signalées.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Boissons}
+  Deux options : vins et cocktails, ou uniquement sans alcool. Ce choix
+  détermine les accords proposés partout dans l'application.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Recettes marquées selon le profil}
+  Les préférences ne masquent pas les recettes : elles les marquent. Une
+  recette est compatible, adaptable (avec la substitution proposée, par
+  exemple des pâtes sans gluten) ou signalée. Les filtres de l'onglet
+  Explorer sont préactivés selon le profil. Les informations sur les
+  allergènes restent indicatives.
+\end{exigence}
+
+\section{Carte du jour}
+
+L'accueil présente le repas du jour sous la forme d'une carte de restaurant
+(écrans 1 et 2).
+
+\begin{exigence}[priorite=haute]{Repas du jour}
+  Chaque jour, l'accueil propose un plat, un verre et un dessert compatibles
+  avec le profil. Le tirage est enregistré avec la date : la carte reste la
+  même toute la journée, y compris hors ligne.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Raccourcis de découverte}
+  Sous la carte, des raccourcis par envie (pâtes, mer, végétarien,
+  desserts…) et par pays ouvrent l'onglet Explorer avec le filtre
+  correspondant.
+\end{exigence}
+
+\section{Recherche et filtrage}
+
+L'onglet Explorer regroupe les plats, les cocktails et les vins
+(écrans 11, 12, 14 et 20, figures~\ref{fig:onglets} et~\ref{fig:exploration}).
+
+\begin{exigence}[priorite=haute]{Recherche}
+  Un champ unique cherche par nom de plat, par ingrédient principal ou par
+  pays. Les résultats s'affichent dans l'onglet actif : plats, cocktails ou
+  vins.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Filtres des plats}
+  Catégorie, pays, régime et matériel. Les filtres actifs restent visibles
+  au-dessus des résultats et se retirent d'un toucher.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Filtres des cocktails}
+  Avec ou sans alcool, et type de verre (highball, coupe, tumbler…).
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Catalogue des vins}
+  Vins classés par couleur (rouge, blanc, rosé, effervescent). Chaque cépage
+  indique son profil, sa température de service et les plats avec lesquels
+  il s'accorde.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Carte du monde}
+  Liste des pays regroupés par région, chacun avec un plat emblématique.
+  Toucher un pays ouvre toutes ses recettes.
+\end{exigence}
+
+\section{Fiches recettes et mode cuisine}
+
+Écrans 3, 4, 13 et 15, figures~\ref{fig:recette} et~\ref{fig:exploration}.
+
+\begin{exigence}[priorite=haute]{Fiche recette}
+  Photo, pays, catégorie, ingrédients présentés en étagère, étapes de
+  préparation et badge d'adaptation au profil. Le matériel nécessaire et
+  les durées s'affichent quand ils sont repérés dans les instructions. Deux
+  actions : cuisiner et ajouter à la liste de courses.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Ajustement des portions}
+  Un compteur modifie le nombre de personnes. Les quantités numériques sont
+  recalculées ; les autres (« au goût », « une pincée ») restent telles
+  quelles. TheMealDB ne précisant pas le nombre de portions, une recette est
+  considérée comme prévue pour quatre personnes.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Ingrédients à cocher}
+  L'utilisateur coche ce qu'il a déjà. Seuls les ingrédients non cochés
+  partent dans la liste de courses.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Mode cuisine}
+  Une étape par écran, en grand, avec les ingrédients qu'elle utilise et une
+  barre de progression. Quand une étape mentionne une durée, un minuteur est
+  proposé ; il continue de tourner d'une étape à l'autre. L'écran reste
+  allumé pendant toute la préparation.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Fiche cocktail}
+  Photo, ingrédients et doses, verre recommandé, mention avec ou sans alcool,
+  et instructions.
+\end{exigence}
+
+\section{Accords plats-boissons et menus}
+
+Écrans 5 et 16, figures~\ref{fig:onglets} et~\ref{fig:menu-scan}.
+
+\begin{exigence}[priorite=haute]{La table dressée}
+  Pour un plat donné, l'onglet Accords propose un vin, un cocktail et un
+  dessert, disposés comme un couvert vu du dessus. Chaque élément ouvre sa
+  fiche. Un sélecteur bascule entre accords avec et sans alcool.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Règles d'accord}
+  Les accords suivent une table de règles rédigée par l'équipe, qui associe
+  la catégorie et le pays d'un plat à des styles de vin et de cocktail (par
+  exemple, fruits de mer et vin blanc sec). Aucune des deux API ne fournit
+  cette information.
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Composer un menu}
+  Un menu réunit une entrée, un plat, un dessert et une boisson, pour une
+  occasion et un nombre de convives. Il est enregistré, et ses ingrédients
+  s'ajoutent à la liste de courses en une fois, ajustés au nombre de
+  convives.
+\end{exigence}
+
+\begin{exigence}[priorite=basse]{Partager un menu}
+  Le menu est envoyé en texte par la feuille de partage d'Android.
+\end{exigence}
+
+\section{Liste de courses}
+
+Écran 17, figure~\ref{fig:onglets}. La liste occupe un onglet de la
+navigation et ne dépend d'aucun service externe : elle fait donc partie de la
+version de base.
+
+\begin{exigence}[priorite=haute]{Ajout depuis une recette ou un menu}
+  Les ingrédients arrivent avec les quantités ajustées. Un même ingrédient
+  exprimé dans la même unité est additionné ; sinon, les deux lignes
+  restent séparées.
+\end{exigence}
+
+\begin{exigence}[priorite=moyenne]{Classement par rayon}
+  Les articles sont regroupés par rayon (fruits et légumes, crèmerie,
+  épicerie, cave…), avec l'avancement de chaque rayon. Un ingrédient inconnu
+  va dans « Autres ».
+\end{exigence}
+
+\begin{exigence}[priorite=haute]{Cocher en magasin}
+  Un toucher coche l'article. Le texte n'est jamais barré, pour rester lisible.
+\end{exigence}
+
+\section{Favoris}
+
+\begin{exigence}[priorite=haute]{Favoris}
+  Plats, boissons et menus se mettent en favori d'un toucher sur le cœur. Ils
+  sont rangés dans trois onglets et restent disponibles hors ligne
+  (écran 19).
+\end{exigence}
+
+\section{Consultation hors ligne}
+
+\begin{exigence}[priorite=haute]{Données disponibles sans réseau}
+  Sans connexion, l'utilisateur garde l'accès à la carte du jour, à ses
+  favoris, à ses menus, à sa liste de courses et aux dernières fiches
+  consultées, photos comprises. La recherche nécessite le réseau ; hors
+  ligne, un message l'indique clairement au lieu d'une liste vide.
+\end{exigence}
+
+\section{Réglages et profil}
+
+\begin{exigence}[priorite=moyenne]{Réglages}
+  Modifier le régime, le matériel et le mode sans alcool ; choisir le thème
+  (système, clair, sombre) ; activer le retour haptique. Les animations sont
+  réduites automatiquement si le téléphone le demande. Une page À propos
+  cite les sources, les mentions légales et les licences open source
+  (écrans 21 et 22).
+\end{exigence}
+
+\begin{exigence}[priorite=basse]{Profil local}
+  L'icône de profil ouvre une connexion simulée : un prénom et un avatar
+  enregistrés sur le téléphone. Il n'y a ni compte ni authentification.
+\end{exigence}

@@ -1,0 +1,116 @@
+% ---------------------------------------------------------------------
+%  04 · Composants — les « signatures » du design system
+%
+%    \pastille{2}                    numéro dans un rond herbe
+%    \etiquette[1]{Le plat}          pilule neutre, numéro optionnel
+%    \badge[agrume]{25 min}          pilule colorée : agrume | herbe | sauge | contour | encre
+%    \bandeau[centre]{gauche}{droite} bandeau daté : filet épais, capitales, filet fin
+%    \pointilles                     points de conduite (remplit la ligne)
+%    lignes + \ligne[n]{libellé}{valeur}   « 2  Le verre ........ Vermentino »
+%    carte[Libellé] · note[Libellé] · attention[Libellé]   encadrés arrondis
+% ---------------------------------------------------------------------
+
+% Pastille numérotée ---------------------------------------------------
+\newcommand\pastille[2][1.5em]{%
+  \tikz[baseline=(p.base)]
+    \node (p) [circle, fill=action, text=surAction, inner sep=0pt,
+               minimum size=#1,
+               font=\policeChiffres\bfseries\fontsize{0.62em}{0.62em}\selectfont]
+               {#2};%
+}
+
+% Pilules --------------------------------------------------------------
+\tikzset{
+  pilule/.style = {rounded corners=0.8em, minimum height=1.6em,
+                   inner xsep=0.7em, inner ysep=0pt,
+                   text height=1.6ex, text depth=0.25ex,
+                   font=\policeMoyenne\bfseries\small},
+  pilule agrume/.style  = {pilule, fill=accent,       text=surAccent},
+  pilule herbe/.style   = {pilule, fill=teinteAction, text=action},
+  pilule sauge/.style   = {pilule, fill=surface,      text=texte2},
+  pilule contour/.style = {pilule, draw=texte, line width=0.7pt, text=texte},
+  pilule encre/.style   = {pilule, fill=texte,        text=fond},
+}
+
+\newcommand\badge[2][agrume]{%
+  \tikz[baseline=(b.base)]\node (b) [pilule #1] {#2};%
+}
+
+\NewDocumentCommand\etiquette{o m}{%
+  \tikz[baseline=(e.base)]\node (e) [pilule, fill=surface, text=texte]
+    {\IfValueT{#1}{\textcolor{action}{#1}\hspace{0.45em}}#2};%
+}
+
+% Bandeau daté ---------------------------------------------------------
+\NewDocumentCommand\bandeau{O{} m m}{%
+  \vbox{%
+    {\color{filetFort}\hrule height 1.1pt}%
+    \vskip 6pt
+    \hbox to \hsize{%
+      \strut\textlabel{#2}\hfill
+      \if\relax\detokenize{#1}\relax\else\textlabel{#1}\hfill\fi
+      \textlabel{#3}}%
+    \vskip 4pt
+    {\color{filet}\hrule height 0.5pt}%
+  }%
+}
+
+% Points de conduite ---------------------------------------------------
+\newcommand\pointilles{%
+  \leaders\hbox to 0.42em{\hss\textcolor{texte2!70}{.}\hss}\hfill
+}
+
+% Lignes numérotées à pointillés ---------------------------------------
+\newenvironment{lignes}{%
+  \par\addvspace{0.8em}%
+  {\color{filet}\hrule height 0.5pt}%
+}{%
+  \par\addvspace{0.8em}%
+}
+
+\NewDocumentCommand\ligne{o m m}{%
+  \par\vskip 5pt
+  \hbox to \linewidth{%
+    \strut
+    \IfValueT{#1}{\pastille{#1}\hspace{0.7em}}%
+    {\policeMoyenne\color{texte2}#2}%
+    \hspace{0.6em}\pointilles\hspace{0.6em}%
+    {\policeIntertitre\large #3}}%
+  \vskip 5pt
+  {\color{filet}\hrule height 0.5pt}%
+}
+
+% Encadrés -------------------------------------------------------------
+\tcbset{
+  marche/.style = {
+    enhanced, breakable, frame hidden,
+    arc=3mm, boxrule=0pt,
+    colback=surface, coltext=texte,
+    left=5mm, right=5mm, top=4.5mm, bottom=4.5mm,
+    before skip=1em, after skip=1em,
+    parbox=false,
+  },
+  libelle/.style = {
+    before upper={%
+      \if\relax\detokenize{#1}\relax\else
+        \textlabel{#1}\par\vspace{0.3em}%
+      \fi},
+  },
+}
+
+\newtcolorbox{carte}[1][]{marche, libelle={#1}}
+
+\newtcolorbox{note}[1][Note]{
+  marche, colback=teinteAction,
+  before upper={\textlabel[action]{#1}\par\vspace{0.3em}},
+}
+
+\newtcolorbox{attention}[1][Attention]{
+  marche, colback=teinteAccent,
+  before upper={\textlabel{#1}\par\vspace{0.3em}},
+}
+
+% Trou à combler : visible dans le PDF tant que le contenu manque
+\newcommand\acompleter[1]{%
+  \begin{attention}[À compléter]#1\end{attention}%
+}

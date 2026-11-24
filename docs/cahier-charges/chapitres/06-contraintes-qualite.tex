@@ -1,0 +1,61 @@
+\chapter{Contraintes et qualité}
+
+\section{Tests unitaires}
+
+La couverture visée est d'au moins 50~\% des lignes, mesurée avec Kover sur
+les ViewModels, les repositories et les fonctions utilitaires. Les
+composables ne sont pas comptés.
+
+\begin{tableau}{L{4cm} Y}
+  \entete{Outil} & \entete{Rôle} \\
+  \midrule
+  JUnit & Exécution des tests \\
+  \midrule
+  MockK & Doublures des repositories et des API \\
+  \midrule
+  kotlinx-coroutines-test & Contrôle du temps et des dispatchers \\
+  \midrule
+  Turbine & Vérification des valeurs émises par les Flow \\
+  \midrule
+  Kover & Rapport de couverture \\
+\end{tableau}
+
+Les tests portent d'abord sur la logique propre à l'application, là où une
+erreur ne se verrait pas à l'écran :
+
+\begin{itemize}
+  \item extraction et mise à l'échelle des quantités ;
+  \item découpage des instructions en étapes et repérage des durées ;
+  \item règles d'accord et compatibilité avec le profil ;
+  \item fusion des articles dans la liste de courses ;
+  \item états des ViewModels : chargement, contenu, erreur, hors ligne.
+\end{itemize}
+
+\section{Gestion Git collaborative}
+
+\begin{itemize}
+  \item Dépôt GitHub. La branche \texttt{main} est protégée et reste toujours
+        compilable.
+  \item Une branche par fonctionnalité ou correction :
+        \texttt{feature/mode-cuisine}, \texttt{fix/portions}…
+  \item Commits au format Conventional Commits : \texttt{feat:},
+        \texttt{fix:}, \texttt{test:}, \texttt{docs:}, \texttt{refactor:}.
+  \item Chaque fusion dans \texttt{main} passe par une pull request relue
+        par l'autre membre.
+  \item GitHub Actions compile le projet et lance les tests à chaque pull
+        request.
+  \item Les tâches sont suivies dans les issues du dépôt, ce qui rend la
+        répartition visible.
+\end{itemize}
+
+\section{Performances et compatibilité}
+
+\begin{itemize}
+  \item Aucun appel réseau ni accès disque sur le thread principal.
+  \item Listes en \texttt{LazyColumn} et \texttt{LazyVerticalGrid} avec des
+        clés stables, pour un défilement sans saccade.
+  \item Images chargées à la taille d'affichage par Coil.
+  \item Build de release minifié avec R8.
+  \item Tests sur un émulateur Android 8.0, un émulateur à la dernière
+        version d'Android et au moins un téléphone réel.
+\end{itemize}

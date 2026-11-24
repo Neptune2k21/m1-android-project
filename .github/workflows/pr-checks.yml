@@ -1,0 +1,71 @@
+name: PR checks
+
+on:
+  pull_request:
+    branches: [dev, main]
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  pr-title:
+    name: pr-title
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check Conventional Commits
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          types='feat|fix|test|docs|refactor|style|perf|build|ci|chore|revert'
+          pattern="^(${types})(\([a-z0-9-]+\))?!?: [^ ]"
+          max=72
+          errors=()
+
+          [[ "$TITLE" =~ $pattern ]] || errors+=("Format attendu : type(scope): description")
+          [[ "$TITLE" != *. ]] || errors+=("Pas de point final")
+          (( ${#TITLE} <= max )) || errors+=("${#TITLE} caractères, maximum ${max}")
+
+          if (( ${#errors[@]} == 0 )); then
+            echo "Titre valide."
+            exit 0
+          fi
+
+          for error in "${errors[@]}"; do
+            echo "::error title=Titre de PR invalide::${error}"
+          done
+
+          cat >> "$GITHUB_STEP_SUMMARY" <<SUMMARY
+          ### Titre de PR invalide
+
+          $(printf -- '- %s\n' "${errors[@]}")
+
+          **Types autorisés :** \`${types//|/, }\` (le scope est facultatif)
+
+          | Valide | Invalide |
+          |---|---|
+          | \`feat: ajoute le mode cuisine\` | \`Ajoute le mode cuisine\` |
+          | \`fix(portions): corrige les quantités\` | \`Fix: portions.\` |
+
+          Modifie le titre de la PR : le check se relance tout seul.
+          SUMMARY
+          exit 1
+
+  # main ne reçoit que dev ou une branche de release. Ignoré sur les PR vers dev.
+  pr-source:
+    name: pr-source
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check source branch
+        env:
+          SOURCE: ${{ github.head_ref }}
+        run: |
+          if [[ "$SOURCE" == dev || "$SOURCE" == release/?* ]]; then
+            echo "Branche source valide."
+            exit 0
+          fi
+
+          echo "::error title=Branche source invalide::Seules dev et release/* peuvent être mergées dans main"
+          exit 1

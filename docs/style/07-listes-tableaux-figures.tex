@@ -1,0 +1,98 @@
+% ---------------------------------------------------------------------
+%  07 · Listes, tableaux, figures
+%
+%    itemize        puce ronde herbe
+%    enumerate      pastilles numérotées
+%    tableau{spec}  tabularx pleine largeur, filet épais haut/bas
+%    \entete{…}     cellule d'en-tête en capitales espacées
+%    \ecran[l]{fichier}{légende}   capture d'écran de maquette (img/)
+% ---------------------------------------------------------------------
+
+% Listes ---------------------------------------------------------------
+\setlist{itemsep=0.25em, topsep=0.4em, parsep=0pt}
+\setlist[itemize]{leftmargin=1.3em}
+\setlist[itemize,1]{label={\raisebox{0.18ex}{\tikz\fill[action] circle (0.19em);}}}
+\setlist[itemize,2]{label={\textcolor{texte2}{–}}}
+\setlist[enumerate,1]{label={\pastille[1.35em]{\arabic*}}, leftmargin=2.1em}
+\setlist[enumerate,2]{label={\textcolor{action}{\policeChiffres\alph*.}}, leftmargin=1.6em}
+\setlist[description]{font={\policeMoyenne\bfseries\color{texte}}, leftmargin=0pt}
+
+% Tableaux -------------------------------------------------------------
+\renewcommand\arraystretch{1.45}
+\setlength\heavyrulewidth{1.1pt}
+\setlength\lightrulewidth{0.5pt}
+\setlength\aboverulesep{0pt}
+\setlength\belowrulesep{0pt}
+\setlength\tabcolsep{7pt}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand\entete[1]{\textlabel[texte2]{#1}}
+\newcommand\filetFort{\arrayrulecolor{filetFort}}
+\newcommand\filetFin{\arrayrulecolor{filet}}
+
+\newenvironment{tableau}[1]
+  {\par\addvspace{0.8em}\noindent
+   \tabularx{\linewidth}{#1}\filetFort\toprule\filetFin}
+  {\filetFort\bottomrule\filetFin\endtabularx\par\addvspace{0.8em}}
+
+% Figures --------------------------------------------------------------
+\graphicspath{{img/}}
+
+\DeclareCaptionFont{texte2}{\color{texte2}}
+\DeclareCaptionLabelFormat{marche}{\textlabel[action]{#1 #2}}
+\DeclareCaptionLabelSeparator{espace}{\quad}
+\captionsetup{
+  labelformat=marche, labelsep=espace,
+  font={small,texte2}, justification=raggedright,
+  singlelinecheck=false, skip=8pt,
+}
+\addto\captionsfrench{\renewcommand\figurename{Figure}\renewcommand\tablename{Tableau}}
+
+\NewDocumentCommand\ecran{O{0.32\linewidth} m m}{%
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=#1]{#2}
+    \caption{#3}
+  \end{figure}%
+}
+
+% Planches de maquettes ------------------------------------------------
+%   \begin{planche}[fig:lancement]{Premier lancement}
+%     \maquette{6 · Splash.png}{6}{Splash}
+%     …
+%   \end{planche}
+% Trois écrans par ligne, deux lignes tiennent sur une page.
+\newcounter{plancheCol}
+
+\newenvironment{planche}[2][]{%
+  \def\plancheLabel{#1}%
+  \def\plancheLegende{#2}%
+  \begin{figure}[htbp]
+    \centering
+    \setlength\parskip{0pt}%
+    \setcounter{plancheCol}{0}%
+}{%
+    \par\vspace{2pt}%
+    \caption{\plancheLegende}%
+    \if\relax\detokenize\expandafter{\plancheLabel}\relax\else\label{\plancheLabel}\fi
+  \end{figure}%
+}
+
+\newcommand\maquette[3]{%
+  \ifnum\value{plancheCol}>0 \hspace{0.075\linewidth}\fi
+  \begin{minipage}[t]{0.28\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{#1}\par
+    \vspace{5pt}%
+    \pastille[1.6em]{#2}\hspace{0.4em}{\small\policeMoyenne #3}%
+  \end{minipage}%
+  \stepcounter{plancheCol}%
+  \ifnum\value{plancheCol}=3
+    \setcounter{plancheCol}{0}\par\vspace{12pt}%
+  \fi
+  \ignorespaces
+}

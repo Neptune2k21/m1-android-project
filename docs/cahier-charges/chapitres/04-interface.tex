@@ -1,0 +1,154 @@
+\chapter{Interface utilisateur}
+\label{ch:interface}
+
+\section{Navigation et écrans principaux}
+
+Une barre de navigation en bas de l'écran donne accès aux cinq onglets. Avec
+la fiche recette, ce sont les six écrans principaux de l'application. Les
+autres écrans (mode cuisine, fiche cocktail, composition de menu, réglages)
+s'ouvrent par-dessus et se ferment avec le retour système.
+
+\begin{tableau}{L{2.6cm} Y R{1.8cm}}
+  \entete{Écran} & \entete{Rôle} & \entete{Maquettes} \\
+  \midrule
+  Carte & Repas du jour et raccourcis de découverte & 1, 2 \\
+  \midrule
+  Explorer & Recherche et filtres : plats, cocktails, vins & 11, 12, 14 \\
+  \midrule
+  Accords & Table dressée autour d'un plat & 5 \\
+  \midrule
+  Courses & Liste par rayon, à cocher en magasin & 17 \\
+  \midrule
+  Favoris & Plats, boissons et menus enregistrés & 19 \\
+  \midrule
+  Fiche recette & Ingrédients, étapes, accès au mode cuisine & 3, 4 \\
+\end{tableau}
+
+\begin{planche}[fig:onglets]{Les cinq onglets de la barre de navigation}
+  \maquette{1 · Accueil, la carte du jour.png}{1}{Carte du jour}
+  \maquette{11 · Explorer, plats.png}{11}{Explorer}
+  \maquette{5 · Accords, la table dressée.png}{5}{Accords}
+  \maquette{17 · Liste de courses.png}{17}{Courses}
+  \maquette{19 · Favoris.png}{19}{Favoris}
+\end{planche}
+
+\section{Parcours}
+
+\subsection{Premier lancement}
+
+Écran d'accueil, vérification d'âge, puis trois étapes de préférences. Chaque
+étape peut être passée.
+
+\begin{planche}[fig:lancement]{Premier lancement : âge et préférences}
+  \maquette{6 · Splash.png}{6}{Splash}
+  \maquette{7 · Vérification d'âge.png}{7}{Vérification d'âge}
+  \maquette{8 · Onboarding, régime.png}{8}{Régime}
+  \maquette{9 · Onboarding, matériel.png}{9}{Matériel}
+  \maquette{10 · Onboarding, boissons.png}{10}{Boissons}
+\end{planche}
+
+\subsection{De la carte du jour à la recette}
+
+Depuis l'accueil, l'utilisateur ouvre le plat du jour, ajuste les portions,
+coche ses ingrédients puis lance le mode cuisine.
+
+\begin{planche}[fig:recette]{Carte du jour, fiche recette et mode cuisine}
+  \maquette{2 · Accueil, en défilant.png}{2}{Accueil, suite}
+  \maquette{3 · Recette.png}{3}{Recette}
+  \maquette{3b · Recette, Nutri-Score du plat.png}{3b}{Nutri-Score}
+  \maquette{4 · Recette, ingrédients.png}{4}{Ingrédients}
+  \maquette{15 · Mode cuisine.png}{15}{Mode cuisine}
+\end{planche}
+
+\subsection{Exploration}
+
+\begin{planche}[fig:exploration]{Exploration des cocktails, des vins et des cuisines du monde}
+  \maquette{12 · Explorer, cocktails.png}{12}{Cocktails}
+  \maquette{13 · Cocktail, verre recommandé.png}{13}{Fiche cocktail}
+  \maquette{14 · Explorer, vins.png}{14}{Vins}
+  \maquette{20 · Carte du monde.png}{20}{Carte du monde}
+\end{planche}
+
+\subsection{Menu et courses}
+
+Un menu composé se transforme en liste de courses. Le scan en magasin
+(écran 18) fait partie des fonctionnalités optionnelles.
+
+\begin{planche}[fig:menu-scan]{Composition d'un menu et scan en magasin}
+  \maquette{16 · Menu builder.png}{16}{Composer le menu}
+  \maquette{18 · Scan, fiche produit.png}{18}{Scan produit}
+\end{planche}
+
+\subsection{Réglages}
+
+\begin{planche}[fig:reglages]{Réglages et sources}
+  \maquette{21 · Réglages.png}{21}{Réglages}
+  \maquette{22 · À propos, sources.png}{22}{À propos}
+\end{planche}
+
+\section{Composants réutilisables}
+
+Les écrans reposent sur un petit nombre de composants communs, définis une
+seule fois dans un paquet \texttt{designsystem} et partagés par toutes les
+fonctionnalités.
+
+\begin{tableau}{L{3.4cm} Y R{1.8cm}}
+  \entete{Composant} & \entete{Usage} & \entete{Écrans} \\
+  \midrule
+  Bandeau daté & Date et météo entre un filet épais et un filet fin & 1 \\
+  \midrule
+  Ligne numérotée & Élément relié à sa valeur par des pointillés & 1, 5, 20, 21 \\
+  \midrule
+  En-tête de fiche & Origine, numéro de fiche, préparation, repos, matériel & 3 \\
+  \midrule
+  Étagère d'ingrédients & Vignettes posées sur un filet, cochables au toucher & 3 \\
+  \midrule
+  Ligne d'ingrédient & Nom, quantité et case à cocher & 4, 17 \\
+  \midrule
+  Boutons & Action principale pleine, secondaire en contour, compteur de portions & 3, 4, 5 \\
+  \midrule
+  Badges & Alcool, sans alcool, adapté, matériel & 11, 12, 13 \\
+  \midrule
+  Puce pays & Drapeau en tuile et nom, sélectionnable & 2, 20 \\
+  \midrule
+  Barre de navigation & Cinq onglets, repère sur l'onglet actif & tous \\
+  \midrule
+  État vide & Message et action quand une liste est vide & 19 \\
+\end{tableau}
+
+\section{Charte graphique}
+
+Trois directions ont été explorées à partir du même écran d'accueil :
+Épicerie, Cave et Marché. Nous retenons la direction C, Marché : titres en
+Schibsted Grotesk, texte et chiffres en Onest, palette verte et agrume
+déclinée en clair et en sombre (figure~\ref{fig:direction-c}).
+
+Les maquettes de ce document ont été réalisées avec la première version du
+design system. La direction C en garde la structure et les composants ; seuls
+les couleurs, les polices et les numéros changent. Comme ces valeurs sont
+centralisées dans le thème Compose, passer d'une direction à l'autre ne
+modifie aucun écran.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{Direction C — Marché.png}
+  \caption{Direction C « Marché » : typographie, palette claire et sombre}
+  \label{fig:direction-c}
+\end{figure}
+
+\section{Thème, tailles d'écran et accessibilité}
+
+\paragraph{Clair et sombre} Le thème suit celui du système par défaut et se
+force dans les réglages. Chaque couleur du design system existe en deux
+valeurs. Toutes les maquettes en mode sombre sont en
+annexe~\ref{ann:sombre}.
+
+\paragraph{Tailles d'écran} Les maquettes sont dessinées en 390 × 844~dp.
+Les mises en page utilisent des largeurs relatives et s'adaptent aux petits
+comme aux grands téléphones. Le mode cuisine reste utilisable en paysage.
+Les tablettes ne sont pas visées.
+
+\paragraph{Accessibilité} Les textes sont en sp et suivent la taille de police
+du système. Les zones tactiles font au moins 48~dp. Les animations sont
+réduites si le système le demande, et la photo n'est jamais la seule porteuse
+d'une information.

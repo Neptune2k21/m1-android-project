@@ -1,0 +1,87 @@
+% ---------------------------------------------------------------------
+%  03 · Typographie
+%  Schibsted Grotesk pour les titres · Onest pour le texte et les chiffres.
+%  Polices embarquées dans fonts/ (licence OFL) : compiler depuis la
+%  racine docs/ pour que les chemins se résolvent.
+% ---------------------------------------------------------------------
+
+\defaultfontfeatures{Ligatures=TeX}
+
+% Texte courant — Onest (pas d'italique dessinée : penché synthétique)
+\setmainfont{Onest}[
+  Path           = fonts/onest/,
+  Extension      = .ttf,
+  UprightFont    = *-Regular,
+  BoldFont       = *-SemiBold,
+  ItalicFont     = *-Regular,
+  BoldItalicFont = *-SemiBold,
+  ItalicFeatures     = {FakeSlant=0.16},
+  BoldItalicFeatures = {FakeSlant=0.16},
+]
+\setsansfont{Onest}[
+  Path           = fonts/onest/,
+  Extension      = .ttf,
+  UprightFont    = *-Regular,
+  BoldFont       = *-SemiBold,
+  ItalicFont     = *-Regular,
+  BoldItalicFont = *-SemiBold,
+  ItalicFeatures     = {FakeSlant=0.16},
+  BoldItalicFeatures = {FakeSlant=0.16},
+]
+\IfFontExistsTF{DejaVu Sans Mono}
+  {\setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]}
+  {\setmonofont{Latin Modern Mono}}
+
+% Titres — Schibsted Grotesk, approche resserrée comme sur les maquettes
+\newfontfamily\policeAffiche{SchibstedGrotesk}[
+  Path = fonts/schibsted-grotesk/, Extension = .ttf,
+  UprightFont = *-Black,     ItalicFont = *-BlackItalic,
+  BoldFont    = *-Black,     BoldItalicFont = *-BlackItalic,
+  LetterSpace = -3,
+]
+\newfontfamily\policeTitre{SchibstedGrotesk}[
+  Path = fonts/schibsted-grotesk/, Extension = .ttf,
+  UprightFont = *-ExtraBold, ItalicFont = *-ExtraBoldItalic,
+  BoldFont    = *-Black,     BoldItalicFont = *-BlackItalic,
+  LetterSpace = -2,
+]
+\newfontfamily\policeIntertitre{SchibstedGrotesk}[
+  Path = fonts/schibsted-grotesk/, Extension = .ttf,
+  UprightFont = *-Bold,      ItalicFont = *-BoldItalic,
+  BoldFont    = *-ExtraBold, BoldItalicFont = *-ExtraBoldItalic,
+  LetterSpace = -1,
+]
+
+% Libellés capitales espacées (« CARTE DU JEUDI 5 NOVEMBRE »)
+\newfontfamily\policeLabel{Onest}[
+  Path = fonts/onest/, Extension = .ttf,
+  UprightFont = *-Medium, BoldFont = *-Bold,
+  LetterSpace = 9,
+]
+% Onest moyen / demi-gras, chiffres tabulaires pour les colonnes
+\newfontfamily\policeMoyenne{Onest}[
+  Path = fonts/onest/, Extension = .ttf,
+  UprightFont = *-Medium, BoldFont = *-Bold,
+]
+\newfontfamily\policeChiffres{Onest}[
+  Path = fonts/onest/, Extension = .ttf,
+  UprightFont = *-Medium, BoldFont = *-Bold,
+  Numbers = Monospaced,
+]
+
+% Raccourcis
+% \textlabel[couleur]{texte} : la couleur reste hors de \MakeUppercase
+\newcommand\textlabel[2][]{{\if\relax\detokenize{#1}\relax\else\color{#1}\fi
+  \policeLabel\footnotesize\MakeUppercase{#2}}}
+\newcommand\textmoyen[1]{{\policeMoyenne #1}}
+\newcommand\textsecondaire[1]{{\color{texte2}#1}}
+\newcommand\deuxchiffres[1]{\ifnum#1<10 0\fi\number#1}
+% Numéro de chapitre affiché : 01, 02… puis A, B… en annexe
+\newcommand\numchapitre{\deuxchiffres{\value{chapter}}}
+\newcommand\numlabel[1]{\IfInteger{#1}{\deuxchiffres{#1}}{#1}}
+
+% Paragraphes
+\linespread{1.18}
+\setlength\parindent{0pt}
+\setlength\parskip{0.55em plus 0.15em minus 0.1em}
+\setlength\emergencystretch{2em}

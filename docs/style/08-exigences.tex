@@ -1,0 +1,55 @@
+% ---------------------------------------------------------------------
+%  08 · Exigences
+%
+%    \begin{exigence}[type=EF, priorite=haute]{Titre}
+%      Description…
+%      \label{ex:scan}
+%    \end{exigence}
+%
+%  Identifiant auto : <type>-<chapitre>.<n>  (ex. EF-03.02), \ref-able.
+%  type     : EF (fonctionnelle) · ENF (non fonctionnelle) · libre
+%  priorite : haute · moyenne · basse
+% ---------------------------------------------------------------------
+
+\newcounter{exigence}[chapter]
+
+\makeatletter
+\pgfkeys{
+  /exigence/.is family, /exigence,
+  type/.store in     = \exg@type,
+  priorite/.store in = \exg@prio,
+  default/.style     = {type=EF, priorite=haute},
+}
+
+\newcommand\exg@badge[1]{%
+  \ifdefstring{#1}{haute}  {\badge[herbe]{Priorité haute}}{%
+  \ifdefstring{#1}{moyenne}{\badge[agrume]{Priorité moyenne}}{%
+  \ifdefstring{#1}{basse}  {\badge[contour]{Priorité basse}}{%
+                            \badge[sauge]{#1}}}}%
+}
+
+\renewcommand\theexigence{\exg@type-\deuxchiffres{\value{chapter}}.\deuxchiffres{\value{exigence}}}
+
+% Un compteur par type (créé au premier usage) : EF-01.01, ENF-01.01, …
+\newcommand\exg@compter{%
+  \ifcsname c@exg@\exg@type\endcsname\else
+    \newcounter{exg@\exg@type}[chapter]%
+  \fi
+  \stepcounter{exg@\exg@type}%
+  \setcounter{exigence}{\numexpr\value{exg@\exg@type}-1\relax}%
+  \refstepcounter{exigence}%
+}
+
+\NewDocumentEnvironment{exigence}{O{} m}{%
+  \pgfkeys{/exigence, default, #1}%
+  \exg@compter
+  \begin{tcolorbox}[marche]
+    \noindent
+    \textlabel[action]{\theexigence}\hfill\exg@badge{\exg@prio}\par
+    \vspace{0.4em}%
+    {\policeIntertitre\large #2\par}%
+    \vspace{0.2em}%
+}{%
+  \end{tcolorbox}%
+}
+\makeatother

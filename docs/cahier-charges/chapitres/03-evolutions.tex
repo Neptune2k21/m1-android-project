@@ -1,0 +1,58 @@
+\chapter{Fonctionnalités optionnelles}
+
+Ces fonctionnalités dépendent d'une source de données ou d'un capteur
+supplémentaire. Elles seront traitées une fois la version de base terminée,
+dans l'ordre de ce chapitre.
+
+\section{Suggestions selon la météo et tirage au sort}
+
+\begin{itemize}
+  \item \textbf{Carte du jour selon la météo.} Le bandeau de l'accueil
+        affiche la date et le temps local (écran 1), et le tirage privilégie
+        les plats froids quand il fait chaud. Il faut une API météo sans clé,
+        comme Open-Meteo, et la localisation approximative.
+  \item \textbf{Le verre du hasard.} Un cocktail tiré au sort sur l'accueil
+        (écran 2), renouvelé en secouant le téléphone (accéléromètre).
+\end{itemize}
+
+\section{Informations nutritionnelles et scan}
+
+\begin{itemize}
+  \item \textbf{Nutri-Score estimé} d'un plat (écran 3b). TheMealDB ne
+        fournit aucune valeur nutritionnelle et exprime les quantités en
+        texte libre. Le calcul suppose une table de composition des
+        aliments et une conversion des mesures en grammes. Le résultat
+        reste une estimation, présentée comme telle.
+  \item \textbf{Scan d'un code-barres} en magasin (écran 18) : CameraX et
+        ML Kit pour la lecture, Open Food Facts pour la fiche produit.
+        Un produit reconnu peut être coché directement dans la liste de
+        courses.
+\end{itemize}
+
+\section{Variantes sans alcool}
+
+Le sélecteur « Version sans alcool » d'une fiche cocktail (écran 13). Aucune
+API ne relie un cocktail à son équivalent sans alcool : il faut une table de
+correspondances rédigée par l'équipe.
+
+\section{Planification des repas}
+
+Associer des menus aux jours de la semaine et générer la liste de courses de
+la semaine entière.
+
+\section{Recherche par ingrédients disponibles}
+
+L'utilisateur indique ce qu'il a dans ses placards et obtient les recettes
+réalisables. L'API gratuite ne filtre que sur un ingrédient à la fois :
+l'application croise elle-même les résultats.
+
+\section{Estimation du coût}
+
+Aucune des deux API ne donne de prix. L'estimation reposerait sur une table
+de prix moyens par ingrédient, forcément indicative.
+
+\section{Traduction des recettes}
+
+Les contenus des API sont en anglais. Une traduction sur l'appareil (ML Kit
+Translation) rendrait les fiches en français. Dans la version de base, seule
+l'interface est en français.
