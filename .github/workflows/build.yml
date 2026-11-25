@@ -25,4 +25,4 @@ jobs:
           java-version: 25
           cache: gradle
 
-      - run: ./gradlew assembleDebug
+      - run: ./gradlew assembleDebug test
