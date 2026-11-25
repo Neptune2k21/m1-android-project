@@ -33,6 +33,8 @@ fun lireQuantite(texte: String?): Quantite {
     val resultat = mesure.matchEntire(normalise) ?: return Quantite.Libre(texte)
     val valeur = lireValeur(resultat.groupValues[1]) ?: return Quantite.Libre(texte)
     val unite = normaliserUnite(resultat.groupValues[2])
+    // t et T peuvent désigner des cuillères différentes selon la source.
+    if (unite == "t") return Quantite.Libre(texte)
     // Les unités inconnues simples (cloves, tin...) sont conservées.
     // Un texte plus complexe demande une interprétation que le parseur ne peut garantir.
     if (unite != null && !estUniteConnue(unite) && !uniteSimple.matches(unite)) {

@@ -39,6 +39,7 @@ class QuantiteTest {
             "2-3 oz", "2 - 3 oz", "1–2 cups", "2-4",
             "1/0", "1 1/0 cups", "-5g", "−½ cup", "1.2.3 g",
             "1 cup to taste", "1 2 cups", "250 g extra", "NaN", "½2 cup", "1½2 cups",
+            "1 t", "1 T",
         ).forEach { texte ->
             assertEquals(texte, Quantite.Libre(texte), lireQuantite(texte))
         }
