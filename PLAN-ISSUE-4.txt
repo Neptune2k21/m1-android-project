@@ -1,0 +1,562 @@
+Table complète — Plan de travail du ticket #4
+Définir les modèles, Quantite et UiState
+Parent : Mettre en place le core
+
+Objectif
+Donner aux couches données et écran les mêmes types Kotlin. Un premier
+parcours servira de fil rouge : ouvrir une recette pour quatre personnes,
+passer à six, puis retrouver les bonnes quantités dans les courses. Si le
+réseau tombe, la fiche déjà consultée doit rester lisible.
+
+Périmètre retenu pour cette branche
+
+Le ticket #4 fournit les types partagés, les calculs de Quantite, leurs
+tests JVM et les fixtures réutilisables. Le parcours recette sert à définir
+les contrats et les exemples de test. Son raccordement complet relève du
+ticket #11.
+
+Architecture retenue pour la suite
+Écran Compose → ViewModel → Repository
+Le repository coordonnera la base Room et les appels API. Les DTO seront
+convertis vers les modèles métier avant d'être utilisés par les écrans.
+
+Des UseCase pourront être ajoutés quand une action devient complexe ou
+partagée entre plusieurs ViewModels. Les modèles restent réutilisables.
+Le rangement retenu dans cette branche suit core/di et reste dans app,
+sous com.example.m1_android_project :
+- core/model : ElementCarte, Recette, Boisson, Cocktail, Vin, Ingredient,
+  Profil, Quantite et fonctions pures de quantité.
+- core/state : UiState et AppError.
+- core.testing dans les sources de test : fixtures partagées.
+
+Répartition avec les autres tickets
+- #5 : services API, DTO et mappers vers les modèles définis ici.
+- #6 : entités et base Room, préférences DataStore.
+- #7 : contrats et implémentations des repositories, cachedResource,
+  coordination cache/réseau et traduction des erreurs techniques.
+- #8 : composants Compose de chargement, erreur et actions.
+- #9 : composants Compose de contenu.
+- #10 : navigation et cinq onglets.
+- #11 : ViewModel, état spécifique et écran de fiche recette, raccordement
+  des couches pour valider le core.
+
+1. Poser le contrat des modèles
+
+Utiliser des propriétés immuables et des types utilisables dans un test
+JVM, sans import Android, Compose, Retrofit ou Room.
+
+[x] Ingredient : nom et quantité. Une mesure manquante doit rester
+    distincte de zéro. Le même type sert aux ingrédients d'une recette
+    et aux doses d'un cocktail.
+[x] ElementCarte : interface Kotlin commune avec les propriétés en val
+    id: String, nom: String et photoUrl: String?. Elle permet de manipuler
+    recettes et boissons dans les favoris, les menus et la recherche.
+    L'identifiant inclut la source pour éviter les collisions entre API
+    et catalogue local (ex. mealdb:123, cocktaildb:123, vin:merlot).
+
+    Hiérarchie retenue
+    ElementCarte
+      - Recette (data class)
+      - Boisson (sealed interface)
+          - Cocktail (data class)
+          - Vin (data class)
+
+[x] Recette : implémenter ElementCarte et ajouter pays, catégorie,
+    ingrédients ordonnés, étapes ordonnées et nombre de portions de base.
+    Prévoir quatre portions pour TheMealDB. Matériel et durées sont
+    facultatifs lorsqu'ils ne sont pas connus. Les cases cochées et le
+    nombre de convives sélectionné appartiennent à l'écran.
+[x] Boisson : étendre ElementCarte avec une sealed interface et une
+    propriété contientAlcool: Boolean. Cette propriété permet au futur
+    filtrage de tenir compte du profil.
+    - Cocktail : ingrédients et doses (Ingredient avec Quantite), étapes,
+      verre recommandé facultatif et indication avec ou sans alcool.
+      Les doses décrivent une préparation de référence, indépendante
+      de la convention des quatre portions de TheMealDB.
+    - Vin : cépage, couleur (rouge, blanc, rosé, effervescent), profil
+      gustatif, température de service et accords du catalogue local.
+      Un Vin du catalogue est alcoolisé.
+
+    Trois vins de départ pour les fixtures du catalogue local
+    Les profils, températures et accords ci-dessous sont des valeurs
+    d'exemple pour tester les modèles et préparer les futurs écrans.
+    Chaque entrée a photoUrl = null et contientAlcool = true.
+
+    Identifiant      Nom                 Cépage       Couleur
+    vin:merlot       Merlot rouge        Merlot       Rouge
+    vin:chardonnay   Chardonnay blanc    Chardonnay   Blanc
+    vin:grenache     Grenache rosé       Grenache     Rose
+
+    - Merlot rouge : profil fruité et souple, service 16 °C,
+      accords d'exemple : plats mijotés et légumes rôtis.
+    - Chardonnay blanc : profil sec et rond, service 10 °C,
+      accords d'exemple : poisson et volaille.
+    - Grenache rosé : profil léger et fruité, service 10 °C,
+      accords d'exemple : salades et grillades.
+
+    La couleur sera un enum Rouge, Blanc, Rose, Effervescent.
+    Ces entrées servent à construire trois fixtures Kotlin dans #4.
+    Le chargement du catalogue dans les repositories sera raccordé
+    dans les tickets de données.
+
+    Différences à préserver
+    - Les trois types partagent uniquement id, nom et photoUrl via
+      ElementCarte. Une photo peut manquer, quelle que soit la source.
+    - Recette et Cocktail portent une préparation avec ingrédients et
+      étapes. Le Vin porte des informations de dégustation et d'accord.
+      Garder ces propriétés dans les modèles concernés.
+    - Pays, catégorie, portions, matériel et durées appartiennent à
+      Recette. Le verre recommandé appartient à Cocktail.
+    - contientAlcool appartient à Boisson et sert aux deux variantes.
+      Le filtrage selon la majorité et les préférences viendra ensuite.
+    - Ingredient reste un type composé utilisé par les préparations.
+      Profil décrit l'utilisateur et ses préférences.
+    - Les futurs DTO réseau et entités Room seront convertis vers ces
+      types métier par les mappers.
+[x] Profil : garder séparés la déclaration de majorité et le choix de
+    boissons. L'alcool est visible uniquement après confirmation de
+    majorité ET choix « vins et cocktails ». Représenter les régimes
+    et les équipements comme des choix multiples. Le prénom et l'avatar
+    du profil local peuvent être absents.
+    Représenter la majorité par trois valeurs : NonRenseignee, Mineur,
+    Majeur. Par défaut, majorité non renseignée et mode sans alcool.
+
+    Champs et validations retenus à l'implémentation
+    - Identifiants au format source:valeur, sans espaces, source et valeur
+      non vides. Les noms et le cépage du vin sont non blancs.
+    - Recette : pays, origineCulinaire et categorie sont des String
+      facultatives. Les listes ingredients et etapes sont explicites
+      à la construction. Chaque étape renseignée contient du texte.
+    - Recette : materiel est un Set<Equipement> facultatif. null signifie
+      inconnu, emptySet signifie aucun matériel identifié. dureeMinutes
+      est un Int facultatif positif ou nul. portionsBase est positif.
+    - Cocktail : verre et photoUrl sont des String facultatives.
+      contientAlcool, ingredients et etapes sont fournis explicitement.
+    - Vin : cepage et profilGustatif sont des String, couleur un enum,
+      accords une List<String>, temperatureServiceCelsius un Int
+      facultatif. photoUrl est facultative.
+    - Profil : majorite et preferenceBoissons sont des enums, regimes et
+      equipements des ensembles, prenom et avatar des String facultatives.
+      La décision d'affichage de l'alcool sera appliquée dans les écrans.
+
+2. Écrire et tester Quantite avant de l'utiliser dans les fiches
+
+    Hiérarchie retenue
+    Quantite (sealed interface)
+      - Numerique (data class)
+          valeur: BigDecimal
+          unite: String? = null
+      - Libre (data class)
+          texte: String
+      - NonRenseignee (data object)
+
+    BigDecimal provient de java.math et reste utilisable en test JVM.
+    Il permet les calculs décimaux sans approximation binaire de Double.
+    Construire les valeurs depuis du texte. Pour les divisions comme 1/3,
+    utiliser MathContext.DECIMAL128 (34 chiffres, arrondi HALF_EVEN) et
+    tester cette précision. Conserver les décimales dans les calculs.
+    Pour les portions, toujours repartir de la quantité de base.
+    L'écran pourra présenter des fractions comme ½ citron ou 1½ cups.
+    Les règles d'arrondi d'affichage par unité seront fixées côté UI.
+
+    La sealed interface ferme la liste des variantes et permet un when
+    exhaustif. Les data class apportent l'égalité par valeur.
+    Numerique utilise une factory companion operator invoke, accessible
+    avec Numerique(valeur, unite), qui normalise unité et BigDecimal.
+    Son constructeur et sa copie générée restent privés grâce à
+    @ConsistentCopyVisibility. Pour changer sa valeur, repasser par la
+    factory. Ainsi 1 et 1.00 ont la même égalité et le même hashCode.
+    Les autres data class conservent leur copy et valident leurs invariants.
+    Le data object représente l'absence de mesure par une instance unique.
+    Ingredient contient une Quantite. L'unité reste une chaîne facultative
+    normalisée à la construction et à la lecture (casse et espaces de
+    bord). Une unité absente permet de représenter un nombre de pièces.
+
+    Fonctions pures prévues dans core/model
+    - fun lireQuantite(texte: String?): Quantite
+    - fun Quantite.mettreAEchelle(
+          portionsInitiales: Int,
+          portionsDemandees: Int,
+      ): Quantite
+    - fun Quantite.Numerique.additionnerSiCompatible(
+          autre: Quantite.Numerique,
+      ): Quantite.Numerique?
+
+    L'addition renvoie null pour des unités incompatibles. Deux mesures
+    sans unité sont compatibles. Libre et NonRenseignee restent identiques
+    lors de la mise à l'échelle.
+
+[x] Distinguer une mesure numérique (valeur et unité éventuellement
+    absente), un libellé libre à conserver et une mesure non renseignée.
+    Lire la chaîne entière : une entrée ambiguë ne doit pas devenir un
+    nombre uniquement parce qu'elle commence par un chiffre.
+[x] Centraliser la lecture dans lireQuantite(texte: String?): Quantite.
+    Null, vide ou espaces seuls donnent NonRenseignee.
+    Accepter entiers, décimales avec point ou virgule, fractions simples,
+    mixtes et Unicode (ex. ½), avec ou sans espace avant l'unité.
+    Une entrée ambiguë ou invalide (1–2 cups, 1/0) reste Libre avec
+    son texte original. Les nombres de portions égaux à zéro ou
+    négatifs sont refusés.
+
+    Politique retenue pour les valeurs négatives
+    - Numerique exige valeur >= 0. Une construction directe avec une
+      valeur négative lève IllegalArgumentException via require.
+    - lireQuantite conserve une mesure externe négative comme « -5 g »
+      ou « −½ cup » (signe Unicode) dans Libre, sans lever d'exception.
+      La valeur ne participe donc pas aux calculs automatiques, et les
+      autres ingrédients de la fiche peuvent être chargés.
+    - Conserver le signe d'origine, sans valeur absolue ni remplacement
+      par zéro. Zéro est une quantité numérique valide, distincte d'une
+      mesure absente.
+    - AppError reste dédié aux trois erreurs de chargement prévues.
+      Les tests couvrent le refus à la construction et le repli du parseur.
+[x] Normaliser les unités à l'aide d'une table d'alias testée, après
+    harmonisation de la casse et des espaces de bord.
+    Exemple retenu : cup et cups deviennent cup. g et kg restent
+    distincts. Une unité inconnue conserve son libellé normalisé.
+    Liste initiale des unités (clé canonique à gauche)
+    g      : g, gram, grams, gramme, grammes
+    kg     : kg, kilogram, kilograms, kilogramme, kilogrammes
+    mg     : mg, milligram, milligrams, milligramme, milligrammes
+    ml     : ml, milliliter, milliliters, millilitre, millilitres
+    cl     : cl, centiliter, centiliters, centilitre, centilitres
+    dl     : dl, deciliter, deciliters, décilitre, décilitres
+    l      : l, liter, liters, litre, litres
+    tsp    : tsp, teaspoon, teaspoons, cuillère à café, cuillères à café,
+             c. à café
+    tbsp   : tbsp, tablespoon, tablespoons, cuillère à soupe,
+             cuillères à soupe, c. à soupe
+    cup    : cup, cups
+    oz     : oz, ounce, ounces
+    fl oz  : fl oz, fluid ounce, fluid ounces
+    lb     : lb, lbs, pound, pounds
+    piece  : piece, pieces, pièce, pièces
+
+    Normaliser avec une casse indépendante de la langue du téléphone,
+    retirer les espaces de bord et réduire les espaces internes répétés.
+    Tester les variantes majuscules comme mL et les unités à plusieurs
+    mots comme fl oz. Les mesures utilisant t ou T restent Libre pour
+    préserver leur sens, car ces abréviations peuvent différer par la casse.
+    L'absence d'unité reste null et se distingue de piece.
+    tsp, tbsp, cup et ml sont des unités distinctes. oz et fl oz le sont
+    aussi. La table normalise les libellés et laisse les conversions à
+    une éventuelle évolution. « to taste » et « une pincée » restent
+    des quantités libres.
+    Compléter cette table à partir de mesures réelles lors du ticket #5.
+[x] Recalculer depuis la quantité de base avec le rapport portions
+    demandées / portions de base. Exiger des nombres de portions positifs.
+    Revenir au nombre de départ doit restituer la mesure d'origine.
+[x] Fournir une addition qui signale si deux mesures numériques ont la
+    même unité. Le code des courses vérifiera aussi l'identité de
+    l'ingrédient. Si la fusion est impossible, il gardera les deux lignes.
+
+    Entrée ou action                         Résultat attendu
+    « 250g » pour 4, puis 6, puis 4          250 g → 375 g → 250 g
+    « 1 1/2 cups » pour 4, puis 2            1,5 cups → 0,75 cup
+    « 1/2 » sans unité, facteur 2            1, sans unité
+    « to taste » ou « une pincée », × 2      libellé d'origine conservé
+    mesure vide ou fraction « 1/0 »          absente ou texte, respectivement
+    « -5 g » ou « −½ cup » de l'API          Libre, texte original conservé
+    Numerique avec valeur négative           IllegalArgumentException
+    « 0g »                                  Numerique(0, g)
+    « 1 cup » + « 1 cups »                   Numerique(2, cup)
+    tomates 250 g + tomates 125 g            une ligne de 375 g
+    tomates 250 g + tomates 1 kg             deux lignes, unités différentes
+    tomates 250 g + farine 125 g             deux lignes, ingrédients différents
+
+    Pour la fraction mixte, les valeurs attendues portent sur le nombre ;
+    la présentation des décimales et du pluriel relève de l'écran.
+
+3. Définir les états partagés en Kotlin
+
+[x] AppError : sealed interface avec trois data object, HorsLigne,
+    DelaiDepasse et Serveur. Ces valeurs décrivent la cause d'un échec.
+    Dans #7, le repository traduira les erreurs techniques vers ces cas.
+    Les messages localisés et l'action « Réessayer » seront traités
+    par les composants et écrans des tickets suivants.
+
+[x] UiState<out T : Any> : sealed interface générique avec trois variantes.
+    Le paramètre T désigne le contenu, par exemple Recette ou
+    List<Boisson>.
+
+    UiState<out T : Any>
+      - Chargement (data object, UiState<Nothing>)
+      - Contenu<T> (data class, UiState<T>)
+          donnees: T
+          erreur: AppError? = null
+      - Erreur (data class, UiState<Nothing>)
+          cause: AppError
+
+    Chargement représente le premier accès sans contenu disponible.
+    Contenu conserve les données affichables même si leur actualisation
+    échoue. Erreur représente un échec sans données disponibles.
+    Une recherche réussie sans résultat contient une liste vide.
+
+    Lors du ticket #11, le ViewModel exposera son état en StateFlow.
+    Un état propre à la fiche pourra réunir :
+    - recette: UiState<Recette>
+    - portionsDemandees: Int
+    - ingredientsCoches: ensemble d'identifiants ou de positions stables
+
+    Cette composition permet de conserver les interactions de l'écran
+    tout en réutilisant les états de chargement. Le ticket #4 définit
+    UiState et ses exemples de valeurs. Le ticket #11 définira les
+    transitions effectives et leur affichage.
+
+    Situation                                État attendu
+    Première ouverture, requête en cours      Chargement
+    Fiche chargée et actualisée               Contenu(fiche, sans erreur)
+    Cache présent, actualisation en échec     Contenu(ficheEnCache, cause)
+    Délai dépassé, aucune fiche en cache      Erreur(DelaiDepasse)
+    Recherche hors ligne, sans cache          Erreur(HorsLigne)
+    Recherche réussie, aucun résultat         Contenu(liste vide, sans erreur)
+
+4. Préparer les fixtures et valider le ticket
+
+[x] Placer les fixtures dans app/src/test/java, sous le package existant
+    core.testing. Préparer une recette pour quatre avec les tomates à
+    250 g et le sel « to taste », un cocktail sans alcool, les trois vins
+    locaux décrits dans la section modèles
+    et des profils contrastés (mineur, majeur sans alcool, majeur avec
+    alcool). Fixer les identifiants et les valeurs pour des tests
+    reproductibles sans réseau ni émulateur.
+[x] Exécuter les cas du tableau Quantite en tests JVM. Les exemples de
+    courses indiquent les règles que ces opérations devront permettre.
+    Ici, tester l'addition des quantités compatibles et son refus pour
+    des unités différentes. La fusion des lignes par ingrédient sera
+    mise en place avec la fonctionnalité courses.
+[x] Pour UiState, réutiliser la même fixture de recette comme contenu
+    à jour et comme contenu en cache avec erreur. Garder des exemples
+    pour chacune des trois causes d'erreur. Vérifier l'utilisation du
+    type générique avec une fiche, une liste et une liste vide. Les tests
+    des transitions réseau/cache et du ViewModel accompagneront #7 et #11.
+[x] Lancer depuis la racine sous Windows :
+    .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug
+    Relire les contrats côté recette, boisson et courses. Le ticket
+    est prêt quand les exemples passent et que les deux couches peuvent
+    réutiliser les types. Les écrans, mappers API, tables Room et
+    préférences DataStore seront raccordés dans leurs tickets respectifs.
+
+5. Entrées API à prendre en compte avant le développement
+
+Sources retrouvées dans le cahier des charges
+Chapitre 05, « Sources de données » et « Données ajoutées par l'équipe ».
+Le projet utilise les API V1 TheMealDB et TheCocktailDB, avec la clé de
+test 1 pour le développement pédagogique. Les vins viennent du catalogue
+local JSON. Les profils viennent des préférences locales.
+
+Documentation officielle consultée
+- https://www.themealdb.com/api.php
+- https://www.thecocktaildb.com/api.php
+
+Les exemples ci-dessous proviennent de réponses interrogées pendant la
+préparation du plan. Les extraits JSON sont des projections de champs,
+et les réponses peuvent évoluer. Les fixtures devront figer ces exemples.
+
+Points d'accès prévus (chemins relatifs aux bases ci-dessous)
+TheMealDB : https://www.themealdb.com/api/json/v1/1/
+- search.php?s=... : recherche par nom.
+- filter.php?c=... / ?a=... / ?i=... : catégorie, cuisine, ingrédient.
+- lookup.php?i=... : détail d'une fiche.
+- random.php : fiche aléatoire.
+- categories.php : catalogue des catégories.
+- list.php?a=list : origines culinaires et pays.
+
+TheCocktailDB : https://www.thecocktaildb.com/api/json/v1/1/
+- search.php?s=... : recherche par nom.
+- filter.php?a=... / ?g=... : alcool ou type de verre.
+- lookup.php?i=... : détail d'un cocktail.
+- random.php : cocktail aléatoire.
+- list.php?a=list : valeurs possibles pour l'alcool, consulté pour
+  vérifier le contrat même s'il ne figure pas dans le périmètre du cahier.
+
+A. Fiche recette
+
+Source observée :
+https://www.themealdb.com/api/json/v1/1/lookup.php?i=52771
+
+Projection de la réponse :
+{
+  "meals": [{
+    "idMeal": "52771",
+    "strMeal": "Spicy Arrabiata Penne",
+    "strCategory": "Vegetarian",
+    "strArea": "Italian",
+    "strCountry": "Italy",
+    "strIngredient1": "penne rigate",
+    "strMeasure1": "1 pound",
+    "strIngredient2": "olive oil",
+    "strMeasure2": "1/4 cup",
+    "strIngredient16": null,
+    "strMeasure16": null
+  }]
+}
+
+- Enveloppe meals, identifiant transmis comme chaîne.
+- Photo dans strMealThumb, instructions dans une chaîne strInstructions
+  avec paragraphes et retours à la ligne. Le découpage en étapes sera
+  fait par l'application.
+- Paires strIngredient1..20 et strMeasure1..20 à lire au même indice.
+  Des cases sont vides ou nulles. Ignorer les noms absents, conserver
+  l'ordre et garder un ingrédient nommé même si sa mesure est absente.
+- Mesures également observées : « 3 cloves », « 1 tin », « 6 leaves »
+  et « sprinkling ». Les unités inconnues restent des libellés normalisés.
+- Le nombre de portions est une convention du projet (4). Matériel et
+  durées sont déduits du texte, selon le cahier des charges.
+
+B. Fiche cocktail
+
+Sources observées :
+https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11000
+https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11007
+
+Projection de la réponse Mojito :
+{
+  "drinks": [{
+    "idDrink": "11000",
+    "strDrink": "Mojito",
+    "strAlcoholic": "Alcoholic",
+    "strGlass": "Highball glass",
+    "strIngredient1": "Light rum",
+    "strMeasure1": "2-3 oz ",
+    "strIngredient2": "Lime",
+    "strMeasure2": "Juice of 1 ",
+    "strIngredient3": "Sugar",
+    "strMeasure3": "2 tsp ",
+    "strIngredient5": "Soda water",
+    "strMeasure5": null
+  }]
+}
+
+- Enveloppe drinks et identifiant chaîne. Photo dans strDrinkThumb.
+- Paires strIngredient1..15 / strMeasure1..15, avec cases nulles.
+- strInstructions est du texte. strInstructionsFR est présent dans les
+  exemples consultés, mais prévoir un repli sur strInstructions si la
+  version française est absente ou vide.
+- La Margarita contient « 1 1/2 oz », « 1/2 oz » et « 1 oz ».
+  Son ingrédient Salt n'a pas de mesure. Conserver ce sel avec
+  Quantite.NonRenseignee.
+- Les espaces de bord sont fréquents dans les mesures. Le parseur
+  normalise pour les nombres et conserve le texte original en repli.
+
+Valeurs d'alcool réellement renvoyées :
+https://www.thecocktaildb.com/api/json/v1/1/list.php?a=list
+- Alcoholic
+- Non alcoholic
+- Optional alcohol
+
+Conséquence pour le booléen contientAlcool
+Le mapper devra traiter explicitement ces trois valeurs et l'absence de
+valeur. Proposition conservatrice pour les futurs tickets : seule la
+valeur Non alcoholic permet le classement sans alcool. Optional alcohol
+et une valeur absente ou inconnue restent exclus du mode sans alcool.
+La classification repose sur le détail, les résumés de filtre ne contenant
+pas ce champ. Cette règle de repli reste à confirmer avant le mapper #5.
+
+C. Résumés, listes de référence et absence de résultat
+
+Sources observées :
+https://www.themealdb.com/api/json/v1/1/filter.php?c=Seafood
+https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic
+https://www.themealdb.com/api/json/v1/1/categories.php
+https://www.themealdb.com/api/json/v1/1/list.php?a=list
+
+- Les filtres renvoient des résumés avec identifiant, nom et photo.
+  Les recettes consultées ajoutent parfois strArea et strCountry,
+  dont strArea peut être null.
+- Un résumé ne fournit pas les ingrédients ni les instructions.
+  Le ticket #5 devra distinguer résumé et fiche détaillée et utiliser
+  lookup.php pour ouvrir une fiche complète. Une liste vide inventée
+  ne doit pas faire passer un résumé pour une fiche chargée.
+- categories.php renvoie une enveloppe categories avec idCategory,
+  strCategory, strCategoryThumb et strCategoryDescription.
+- list.php?a=list renvoie meals avec strArea et strCountry dans les
+  réponses observées. Prévoir des champs facultatifs et conserver
+  la distinction entre libellé de cuisine et nom du pays.
+- Les DTO devront tolérer les champs supplémentaires et les valeurs
+  facultatives. Le mapper contrôlera les identifiants et noms requis.
+
+Sources observées pour une recherche sans correspondance :
+https://www.themealdb.com/api/json/v1/1/search.php?s=zzzz_no_match_987654
+https://www.thecocktaildb.com/api/json/v1/1/search.php?s=zzzz_no_match_987654
+
+Réponses reçues : {"meals":null} et {"drinks":null}.
+Dans ces recherches réussies, convertir la liste nulle en liste vide,
+puis Contenu(listeVide). Distinguer ce résultat d'un échec HTTP ou réseau.
+
+D. Cas concrets à ajouter aux tests de Quantite du ticket #4
+
+Texte brut reçu              Résultat prévu
+« 1 pound »                  Numerique(1, lb)
+« 1/4 cup »                  Numerique(0.25, cup)
+« 1 1/2 oz »                 Numerique(1.5, oz)
+« 2 tsp » avec espaces       Numerique(2, tsp)
+« 3 cloves »                 Numerique(3, cloves), unité inconnue conservée
+« 1 tin »                    Numerique(1, tin), sans conversion de volume
+« 6 leaves »                 Numerique(6, leaves)
+« sprinkling »               Libre
+« 2-3 oz »                   Libre, intervalle conservé
+« 2-4 »                      Libre, intervalle conservé
+« Juice of 1 »               Libre, formulation conservée
+null ou texte vide           NonRenseignee
+
+Les intervalles demandent une reconnaissance explicite avant de traiter
+une unité inconnue : « 2-3 oz » ne doit pas devenir Numerique(2, "-3 oz").
+Le parseur doit consommer une mesure complète et se replier sur Libre
+lorsqu'il ne sait pas l'interpréter de façon fiable.
+
+Les décimales à virgule, les fractions Unicode et les valeurs négatives
+restent des cas de robustesse prévus. Leur prise en charge n'est pas
+déduite de leur présence dans les quelques réponses ci-dessus.
+
+Les DTO, les mappers et les appels réseau seront implémentés dans #5.
+Le ticket #4 utilise ces observations pour définir les contrats métier et
+les fixtures Kotlin, avec des valeurs et des cas de parseur reproductibles.
+
+6. Exécution du ticket #4
+
+Étapes réalisées en tests d'abord
+- QuantiteTest écrit avant les types et fonctions, puis compilation
+  échouée sur les références manquantes. Implémentation, tests et build.
+  Deux tests supplémentaires ont échoué avant correction : fraction
+  Unicode suivie d'un chiffre et conservation d'une longue valeur quand
+  les portions sont identiques. Commit e770cc6.
+- ModelesTest écrit avant modèles et fixtures, puis compilation échouée.
+  Implémentation et validation des modèles, fixtures et identifiants.
+  Commit 267045d.
+- UiStateTest écrit avant UiState et AppError, puis compilation échouée.
+  Implémentation et validation des trois états et trois erreurs.
+  Commit 68fcc53.
+- Test de régression sur les abréviations ambiguës t/T, échec observé,
+  puis repli sur Libre et validation de l'ensemble. Commit 3897da1.
+
+Validation finale
+- 14 tests Quantite, 11 tests modèles/fixtures, 6 tests UiState.
+- Les 2 tests JVM préexistants passent également.
+- :app:testDebugUnitTest et :app:assembleDebug réussis.
+- :app:koverXmlReportDebug réussi. Le pourcentage du rapport n'a pas
+  été consulté : les fichiers app/build sont exclus des lectures de
+  l'agent par Android Studio.
+
+Commande PowerShell utilisée pour les vérifications sur ce PC
+Le chemin accentué a révélé deux problèmes de lancement JVM : lecture
+du classpath du worker Gradle et attachement dynamique de Byte Buddy
+utilisé par MockK. Les options ci-dessous ont permis de lancer les tests,
+y compris les tests préexistants. Elles s'appliquent à cette invocation.
+La configuration partagée du projet conserve son encodage UTF-8.
+
+$env:JAVA_TOOL_OPTIONS = '-javaagent:' + (Join-Path $env:USERPROFILE '.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.18.2\62f38a6faf7f069d661b79a07d566f504b0b20c4\byte-buddy-agent-1.18.2.jar')
+.\gradlew.bat '-Dorg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=windows-1252' :app:testDebugUnitTest :app:assembleDebug :app:koverXmlReportDebug --console=plain
+
+Le chemin de l'agent dépend de la version installée dans le cache Gradle.
+Les données de test restent en Kotlin dans les sources de test. Le
+chargement du catalogue des vins et le traitement de Optional alcohol
+seront raccordés dans les tickets de données, comme prévu plus haut.
+
+Repères dans docs/cahier-charges/
+- Chapitre 02, « Ajustement des portions », « Ajout depuis une recette ou
+  un menu » et « Consultation hors ligne » : règles métier.
+- Chapitre 04 et maquettes 4, 13 et 17 : exemples de quantités visibles.
+- Chapitres 05 et 06 : Room comme source de vérité, états d'écran et
+  priorité aux tests de logique. Le scan et le Nutri-Score figurent
+  parmi les évolutions du chapitre 03.
