@@ -10,8 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.m1_android_project.ui.theme.M1androidprojectTheme
+import com.example.m1_android_project.core.designsystem.theme.TableTheme
+import com.example.m1_android_project.core.designsystem.theme.ThemePreviews
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            M1androidprojectTheme {
+            TableTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
@@ -40,10 +40,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-@Preview(showBackground = true)
+@ThemePreviews
 @Composable
 fun GreetingPreview() {
-    M1androidprojectTheme {
+    TableTheme {
         Greeting("Android")
     }
 }
