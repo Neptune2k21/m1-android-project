@@ -47,6 +47,7 @@ import coil3.size.Size
 import coil3.transform.Transformation
 import com.example.m1_android_project.core.designsystem.theme.TableTheme
 import com.example.m1_android_project.core.designsystem.theme.ThemePreviews
+import com.example.m1_android_project.core.network.Sources
 
 /** Ce que l'étagère montre d'un ingrédient */
 data class IngredientEtagere(
@@ -220,16 +221,16 @@ private fun ApercuEtagereIngredients() = TableTheme {
     var coches by remember { mutableStateOf(setOf(1)) }
     val ingredients = listOf(
         Triple("Farfalle", "350 g", "Farfalle"),
-        Triple("Tomates cerises", "250 g", "Cherry%20Tomatoes"),
+        Triple("Tomates cerises", "250 g", "Cherry Tomatoes"),
         Triple("Mozzarella", "200 g", "Mozzarella"),
         Triple("Thon", "200 g", "Tuna"),
         Triple("Basilic", "1 botte", "Basil"),
-        Triple("Huile d'olive", "3 c. à s.", "Olive%20Oil"),
+        Triple("Huile d'olive", "3 c. à s.", "Olive Oil"),
     ).mapIndexed { index, (nom, quantite, image) ->
         IngredientEtagere(
             nom = nom,
             quantite = quantite,
-            image = "https://www.themealdb.com/images/ingredients/$image-small.png",
+            image = Sources.imageIngredient(image),
             coche = index in coches,
         )
     }

@@ -25,12 +25,13 @@ import coil3.compose.AsyncImage
 import com.example.m1_android_project.core.designsystem.theme.Planche
 import com.example.m1_android_project.core.designsystem.theme.TableTheme
 import com.example.m1_android_project.core.designsystem.theme.ThemePreviews
+import com.example.m1_android_project.core.network.Sources
 
 /** Pays à toucher pour voir sa cuisine, ou filtre à sélectionner */
 @Composable
 fun PucePays(
     nom: String,
-    codePays: String,
+    drapeau: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     selectionne: Boolean = false,
@@ -53,18 +54,18 @@ fun PucePays(
         horizontalArrangement = Arrangement.spacedBy(espacements.s),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Drapeau(codePays)
+        Drapeau(drapeau)
         Text(nom, color = encre, style = TableTheme.typo.libelle)
     }
 }
 
 /** Uni tant que l'image n'est pas chargée */
 @Composable
-private fun Drapeau(codePays: String) {
+private fun Drapeau(url: String?) {
     val forme = TableTheme.formes.case
 
     AsyncImage(
-        model = "https://flags.restcountries.com/v5/w160/${codePays.lowercase()}.png",
+        model = url,
         contentDescription = null,
         modifier = Modifier
             .size(TailleDrapeau)
@@ -85,7 +86,7 @@ private fun ApercuPucePays() = Planche {
 
     Row(horizontalArrangement = Arrangement.spacedBy(TableTheme.espacements.s)) {
         listOf("it" to "Italie", "ma" to "Maroc", "jp" to "Japon").forEach { (code, nom) ->
-            PucePays(nom, code, onClick = { choisi = code }, selectionne = code == choisi)
+            PucePays(nom, Sources.drapeau(code), onClick = { choisi = code }, selectionne = code == choisi)
         }
     }
 }
