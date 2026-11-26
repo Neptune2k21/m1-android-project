@@ -87,7 +87,7 @@ private fun ApercuFormes() = Planche {
 }
 
 @Composable
-private fun Planche(contenu: @Composable () -> Unit) = TableTheme {
+internal fun Planche(contenu: @Composable () -> Unit) = TableTheme {
     Column(
         modifier = Modifier.width(390.dp).padding(TableTheme.espacements.marge),
         verticalArrangement = Arrangement.spacedBy(TableTheme.espacements.s),
