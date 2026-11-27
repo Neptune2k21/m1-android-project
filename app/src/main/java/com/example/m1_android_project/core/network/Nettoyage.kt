@@ -16,7 +16,7 @@ private val etiquette = Regex("^(?:step\\s*)?\\d+[.):]?$", RegexOption.IGNORE_CA
 // « 1. Faire… », « 2) Faire… », « STEP 3 - Faire… »
 private val numero = Regex("^(?:step\\s*)?\\d+\\s*[.):-]\\s+|^step\\s*\\d+\\s+", RegexOption.IGNORE_CASE)
 
-/** Une étape par ligne, sans numéro ni puce : l'écran numérote lui-même */
+/** Une étape par ligne sans numéro ni puce ->l'écran numérote lui-même */
 internal fun decouperEtapes(instructions: String?): List<String> =
     instructions.orEmpty()
         .split(retourLigne)
@@ -24,3 +24,10 @@ internal fun decouperEtapes(instructions: String?): List<String> =
         .filterNot { etiquette.matches(it) }
         .map { it.replace(numero, "").trim() }
         .filter { ligne -> ligne.any(Char::isLetterOrDigit) }
+
+// Point suivi d'une majuscule sauf « Dr. Pepper », « i.e. » et « e.g. »
+private val finDePhrase = Regex("(?<=[.!?])(?<!\\bDr\\.|\\bi\\.e\\.|\\be\\.g\\.)\\s+(?=\\p{Lu})")
+
+/** Les cocktails tiennent en un paragraphe : une phrase par étape */
+internal fun decouperPhrases(instructions: String?): List<String> =
+    decouperEtapes(instructions).flatMap { it.split(finDePhrase) }

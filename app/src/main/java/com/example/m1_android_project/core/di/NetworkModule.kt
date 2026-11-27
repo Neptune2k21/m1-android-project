@@ -1,6 +1,7 @@
 package com.example.m1_android_project.core.di
 
 import com.example.m1_android_project.core.network.Sources
+import com.example.m1_android_project.core.network.cocktaildb.CocktailApi
 import com.example.m1_android_project.core.network.mealdb.MealApi
 import dagger.Module
 import dagger.Provides
@@ -54,6 +55,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMealApi(@MealDb retrofit: Retrofit): MealApi = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideCocktailApi(@CocktailDb retrofit: Retrofit): CocktailApi = retrofit.create()
 
     private fun retrofit(url: String, client: OkHttpClient, json: Json): Retrofit =
         Retrofit.Builder()

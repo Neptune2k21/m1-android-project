@@ -32,6 +32,26 @@ class NettoyageTest {
     }
 
     @Test
+    fun `coupe un paragraphe en phrases`() {
+        assertEquals(
+            listOf("Start with the Sprite.", "Next comes the tequila!", "Rocks optional?", "Stir"),
+            decouperPhrases("Start with the Sprite. Next comes the tequila! Rocks optional? Stir"),
+        )
+    }
+
+    @Test
+    fun `ne coupe ni les abreviations ni les quantites`() {
+        assertEquals(
+            listOf("Mix in the Dr. Pepper and beer."),
+            decouperPhrases("Mix in the Dr. Pepper and beer."),
+        )
+        assertEquals(
+            listOf("Keep layered (i.e. Chambord on bottom, e.g. Vodka next).", "Add 1 1/2 oz. of gin."),
+            decouperPhrases("Keep layered (i.e. Chambord on bottom, e.g. Vodka next). Add 1 1/2 oz. of gin."),
+        )
+    }
+
+    @Test
     fun `prefixe l'id par sa source`() {
         assertEquals("mealdb:52777", identifiant("mealdb", " 52777 "))
         assertNull(identifiant("mealdb", "a:b"))
