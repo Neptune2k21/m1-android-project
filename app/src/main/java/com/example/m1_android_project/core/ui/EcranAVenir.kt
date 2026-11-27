@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.m1_android_project.R
 import com.example.m1_android_project.core.designsystem.theme.TableTheme
+import com.example.m1_android_project.core.navigation.RemonterAuRetouche
 
 /** Écran provisoire d'un onglet remplacé par le vrai dans son issue la liste sert à tester le défilement */
 @Composable
@@ -26,9 +28,12 @@ fun EcranAVenir(
     entete: @Composable () -> Unit = {},
 ) {
     val espacements = TableTheme.espacements
+    val liste = rememberLazyListState()
+    RemonterAuRetouche(liste)
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        state = liste,
         contentPadding = PaddingValues(espacements.marge),
     ) {
         item {

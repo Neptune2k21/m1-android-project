@@ -56,5 +56,15 @@ class NavigationTest {
         regle.onNodeWithText("Ouvrir une fiche d'exemple").assertIsDisplayed()
     }
 
+    @Test
+    fun toucherLOngletActifRemonteEnHaut() {
+        onglet("Explorer").performClick()
+        regle.onNode(hasScrollAction()).performScrollToNode(hasText("Élément 30"))
+
+        onglet("Explorer").performClick()
+
+        regle.onNodeWithText("Élément 1").assertIsDisplayed()
+    }
+
     private fun onglet(nom: String) = regle.onNode(hasText(nom) and hasClickAction())
 }
