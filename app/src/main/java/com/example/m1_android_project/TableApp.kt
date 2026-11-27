@@ -25,6 +25,11 @@ import com.example.m1_android_project.accords.AccordsEcran
 import com.example.m1_android_project.carte.CarteEcran
 import com.example.m1_android_project.core.designsystem.composant.BarreNavigation
 import com.example.m1_android_project.core.designsystem.composant.ElementBarre
+import com.example.m1_android_project.core.designsystem.icone.IconeAccords
+import com.example.m1_android_project.core.designsystem.icone.IconeCarte
+import com.example.m1_android_project.core.designsystem.icone.IconeCourses
+import com.example.m1_android_project.core.designsystem.icone.IconeExplorer
+import com.example.m1_android_project.core.designsystem.icone.IconeFavoris
 import com.example.m1_android_project.core.designsystem.theme.TableTheme
 import com.example.m1_android_project.core.navigation.Onglet
 import com.example.m1_android_project.core.navigation.Routes
@@ -43,7 +48,7 @@ fun TableApp(modifier: Modifier = Modifier, navController: NavHostController = r
     // La barre garde son onglet pendant qu'elle descend
     val dernierOnglet = remember { mutableStateOf(Onglet.Carte) }
     if (onglet != null) dernierOnglet.value = onglet
-    val elements = Onglet.entries.map { ElementBarre(stringResource(it.libelle)) }
+    val elements = Onglet.entries.map { ElementBarre(stringResource(it.libelle), it.icone()) }
 
     Scaffold(
         modifier = modifier,
@@ -81,6 +86,14 @@ fun TableApp(modifier: Modifier = Modifier, navController: NavHostController = r
             }
         }
     }
+}
+
+private fun Onglet.icone(): @Composable (Boolean) -> Unit = when (this) {
+    Onglet.Carte -> { actif -> IconeCarte(actif) }
+    Onglet.Explorer -> { actif -> IconeExplorer(actif) }
+    Onglet.Accords -> { actif -> IconeAccords(actif) }
+    Onglet.Courses -> { actif -> IconeCourses(actif) }
+    Onglet.Favoris -> { actif -> IconeFavoris(actif) }
 }
 
 /** L'écran sortant s'efface, puis l'entrant se pose : aucun ordre suggéré entre les onglets */

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr">
     <string name="app_name">m1-android-project</string>
     <string name="mention_sanitaire">Un verre, ça va. Trois verres, c\'est l\'onglet Accords.</string>
 
