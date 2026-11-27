@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">m1-android-project</string>
     <string name="mention_sanitaire">Un verre, ça va. Trois verres, c\'est l\'onglet Accords.</string>
+
+    <string name="onglet_carte">Carte</string>
+    <string name="onglet_explorer">Explorer</string>
+    <string name="onglet_accords">Accords</string>
+    <string name="onglet_courses">Courses</string>
+    <string name="onglet_favoris">Favoris</string>
+
+    <string name="retour">Retour</string>
+    <string name="ecran_a_venir">Écran à venir</string>
+    <string name="element_provisoire">Élément %1$d</string>
+    <string name="fiche_exemple">Ouvrir une fiche d\'exemple</string>
+    <string name="fiche_titre">Fiche %1$s</string>
 </resources>
