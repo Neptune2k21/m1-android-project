@@ -13,4 +13,6 @@
     <string name="element_provisoire">Élément %1$d</string>
     <string name="fiche_exemple">Ouvrir une fiche d\'exemple</string>
     <string name="fiche_titre">Fiche %1$s</string>
+
+    <string name="etape_sur">Étape %1$d sur %2$d, %3$s</string>
 </resources>
