@@ -18,6 +18,9 @@ object Formes {
     /** Bouton, champ de recherche. */
     val bouton = RoundedCornerShape(18.dp)
 
+    /** Tuile de choix, option illustrée. */
+    val tuile = RoundedCornerShape(20.dp)
+
     val photo = RoundedCornerShape(24.dp)
 
     /** Contenu qui remonte sur la photo d'une fiche. */
