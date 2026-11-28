@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <clipPath id="carreaux-mixeur"><rect x="4" y="4" width="88" height="88" rx="16"/></clipPath>
+  </defs>
+  <!-- carreaux de faïence verts -->
+  <g clip-path="url(#carreaux-mixeur)">
+    <rect x="4" y="4" width="88" height="88" fill="#FFFFFF"/>
+    <rect x="4" y="4" width="42.5" height="42.5" rx="3" fill="#CBE6D6"/>
+    <rect x="49.5" y="4" width="42.5" height="42.5" rx="3" fill="#D6EDE0"/>
+    <rect x="4" y="49.5" width="42.5" height="42.5" rx="3" fill="#D3EBDD"/>
+    <rect x="49.5" y="49.5" width="42.5" height="42.5" rx="3" fill="#C8E5D4"/>
+  </g>
+  <!-- ombre -->
+  <path d="M33 66 L 67 66 L 69 84 L 31 84 Z" fill="#0F1F17" opacity="0.14"/>
+  <!-- poignée du bol -->
+  <path d="M63 28 C 74 28, 75 52, 62 54" stroke="#B9C9BF" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <!-- bol en verre -->
+  <path d="M28 20 L 66 20 L 60 62 L 34 62 Z" fill="#EAF1EC"/>
+  <!-- smoothie framboise -->
+  <path d="M31.4 36 L 62.6 36 L 60 62 L 34 62 Z" fill="#D08B96"/>
+  <ellipse cx="47" cy="36" rx="15.6" ry="2.4" fill="#E3A9B2"/>
+  <g fill="#B9536A"><circle cx="40" cy="36.2" r="2.1"/><circle cx="54" cy="35.8" r="1.9"/></g>
+  <circle cx="47.5" cy="35.8" r="2.3" fill="#FFF0C2"/>
+  <g fill="#FFFFFF" opacity="0.5"><circle cx="38" cy="46" r="1.1"/><circle cx="52" cy="51" r="0.9"/><circle cx="45" cy="56" r="0.8"/></g>
+  <!-- lames -->
+  <path d="M41 60 L 47 57.5 L 53 60" stroke="#8C9B92" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- contour et reflet du verre -->
+  <path d="M28 20 L 66 20 L 60 62 L 34 62 Z" fill="none" stroke="#B9C9BF" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M32.5 24 L 35.5 24 L 36.5 56 L 34.8 56 Z" fill="#FFFFFF" opacity="0.6"/>
+  <!-- couvercle -->
+  <rect x="26" y="14" width="42" height="7" rx="3" fill="#17241E"/>
+  <rect x="42" y="10.5" width="10" height="4.5" rx="1.8" fill="#17241E"/>
+  <!-- socle et molette -->
+  <path d="M33 62 L 61 62 L 65 81 L 29 81 Z" fill="#17241E"/>
+  <rect x="29" y="78" width="36" height="4" rx="2" fill="#0B1410"/>
+  <circle cx="47" cy="71" r="5.6" fill="#AEBCB3"/>
+  <circle cx="47" cy="71" r="4" fill="#C3CFC8"/>
+  <line x1="47" y1="71" x2="49.6" y2="67.8" stroke="#17241E" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="57" cy="71" r="1.4" fill="#4FBF84"/>
+</svg>

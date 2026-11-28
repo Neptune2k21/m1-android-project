@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <!-- assiette vue de dessus -->
+  <circle cx="50.5" cy="51.5" r="42" fill="#0F1F17" opacity="0.10"/>
+  <circle cx="48" cy="48" r="42" fill="#FFFFFF"/>
+  <circle cx="48" cy="48" r="31.5" fill="none" stroke="#E3E8E4" stroke-width="1.5"/>
+  <!-- poisson grillé, en diagonale -->
+  <g transform="rotate(-24 48 47)">
+    <!-- queue -->
+    <path d="M64 47 L 77 37 C 79 43, 79 51, 77 57 Z" fill="#7F948A"/>
+    <path d="M66 47 L 75 40.5 M66 47 L 76.5 47 M66 47 L 75 53.5" stroke="#5E7268" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <!-- nageoire dorsale -->
+    <path d="M40 37.5 C 45 31, 53 31, 58 37 Z" fill="#7F948A"/>
+    <!-- corps -->
+    <path d="M18 47 C 24 35, 48 33, 66 46 C 66.5 46.5, 66.5 47.5, 66 48 C 48 61, 24 59, 18 47 Z" fill="#9DB1A5"/>
+    <!-- ventre clair -->
+    <path d="M20 49 C 28 57, 48 58, 64 48.5 C 48 54, 30 54, 20 49 Z" fill="#DCE5DF"/>
+    <!-- dos plus foncé -->
+    <path d="M24 41 C 34 35.5, 50 35, 62 43 C 50 39, 36 39, 24 41 Z" fill="#7F948A"/>
+    <!-- branchie et œil -->
+    <path d="M30 39.5 C 27 44, 27 50, 30 55" stroke="#5E7268" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+    <circle cx="24.5" cy="45.5" r="2.4" fill="#0F1F17"/>
+    <circle cx="23.8" cy="44.8" r="0.8" fill="#FFFFFF"/>
+    <!-- marques du grill -->
+    <g stroke="#55635B" stroke-width="2.4" stroke-linecap="round" opacity="0.85">
+      <line x1="36" y1="53" x2="41" y2="40"/>
+      <line x1="44" y1="54.5" x2="49" y2="40"/>
+      <line x1="52" y1="53.5" x2="57" y2="41.5"/>
+    </g>
+  </g>
+  <!-- rondelle de citron -->
+  <circle cx="68" cy="66" r="10.5" fill="#FFB020"/>
+  <circle cx="68" cy="66" r="9" fill="#FFF6DC"/>
+  <circle cx="68" cy="66" r="7.8" fill="#FFD866"/>
+  <g stroke="#FFF6DC" stroke-width="1.1" stroke-linecap="round">
+    <line x1="68" y1="58.6" x2="68" y2="73.4"/>
+    <line x1="61.6" y1="62.3" x2="74.4" y2="69.7"/>
+    <line x1="61.6" y1="69.7" x2="74.4" y2="62.3"/>
+  </g>
+  <!-- brin d'herbes, feuilles en amande comme la feuille-accent -->
+  <path d="M21 33 C 26 28.5, 32 26.5, 39.5 27.5" stroke="#0E5C39" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  <g fill="#16764A">
+    <ellipse cx="25.5" cy="28" rx="3.4" ry="1.6" transform="rotate(-55 25.5 28)"/>
+    <ellipse cx="31" cy="24.8" rx="3.4" ry="1.6" transform="rotate(-40 31 24.8)"/>
+    <ellipse cx="37.4" cy="24" rx="3.2" ry="1.5" transform="rotate(-20 37.4 24)"/>
+  </g>
+  <g fill="#2F8A55">
+    <ellipse cx="27.8" cy="32.6" rx="3.2" ry="1.5" transform="rotate(35 27.8 32.6)"/>
+    <ellipse cx="34" cy="30.6" rx="3.2" ry="1.5" transform="rotate(25 34 30.6)"/>
+    <ellipse cx="41.6" cy="27.4" rx="2.6" ry="1.3"/>
+  </g>
+</svg>
